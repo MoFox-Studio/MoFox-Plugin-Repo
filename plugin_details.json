@@ -10,5 +10,46 @@
       "license": "MIT"
     },
     "createdAt": "2025-10-31T12:02:20.540Z"
+  },
+  {
+    "id": "dice-and-tarot",
+    "manifest": {
+      "name": "骰子与塔罗牌插件 (Dice and Tarot)",
+      "description": "提供 DND 骰子投掷和赛博塔罗牌占卜功能。支持标准DND骰子表达式（如2d6+3），包含完整78张塔罗牌，随机正位/逆位占卜。",
+      "usage": "",
+      "version": "1.0.0",
+      "author": "MoFox Community",
+      "license": "MIT",
+      "repository_url": "https://github.com/SolenmeChiara/mofox-dice-tarot-plugin",
+      "keywords": [
+        "dice",
+        "tarot",
+        "dnd",
+        "骰子",
+        "塔罗牌",
+        "娱乐",
+        "占卜",
+        "游戏"
+      ],
+      "categories": [
+        "Entertainment",
+        "Games",
+        "Fun"
+      ],
+      "extra": "{\n        \"is_built_in\": false,  # 第三方插件\n        \"plugin_type\": \"entertainment\",\n        \"min_bot_version\": \"1.0.0\",\n        \"python_version\": \">=3.11\",\n    }"
+    },
+    "createdAt": "2025-10-31T12:24:05.706Z"
+  },
+  {
+    "id": "bingyv92.Muteplgin",
+    "manifest": {
+      "name": "群聊禁言管理插件 (Mute Plugin)",
+      "description": "群聊禁言管理插件",
+      "usage": "在群聊中提供智能禁言功能",
+      "version": "4.2.0",
+      "author": "SengokuCola",
+      "license": "MIT"
+    },
+    "createdAt": "2025-10-31T12:24:05.810Z"
   }
 ]
