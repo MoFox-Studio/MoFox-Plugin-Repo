@@ -44,7 +44,7 @@
   {
     "id": "bingyv92.Muteplgin",
     "manifest": {
-      "name": "群聊禁言管理插件 (Mute Plugin)",
+      "name": "群聊禁言管理插件 Mute Plugin",
       "description": "群聊禁言管理插件",
       "usage": "在群聊中提供智能禁言功能",
       "version": "4.2.0",
@@ -52,5 +52,17 @@
       "license": "MIT"
     },
     "createdAt": "2025-10-31T12:24:05.810Z"
+  },
+  {
+    "id": "bingyv92.mofox_period_plugin",
+    "manifest": {
+      "name": "月经周期状态插件",
+      "description": "模拟女性月经周期对机器人状态的影响，让机器人具有生物节律",
+      "usage": "根据月经周期调整机器人的生理和心理状态，影响回复风格",
+      "version": "1.0.0",
+      "author": "bingyv92",
+      "license": "MIT"
+    },
+    "createdAt": "2025-10-31T13:20:25.415Z"
   }
 ]
