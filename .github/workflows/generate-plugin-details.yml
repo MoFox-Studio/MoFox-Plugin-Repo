@@ -199,10 +199,17 @@ jobs:
             console.log(`    [预处理] 合并后的内容: ${singleLineContent}`);
 
             const regex = /(\w+)\s*=\s*(?:"""([\s\S]*?)"""|"([^"]*?)"|'([^']*?)')/g;
-            let match;
+            let regexMatch;
 
-            while ((match = regex.exec(singleLineContent)) !== null) {
-                const key = match[1];
+            while ((regexMatch = regex.exec(singleLineContent)) !== null) {
+                const key = regexMatch[1];
+                // match[2] 是 """..."""
+                // match[3] 是 "..."
+                // match[4] 是 '...'
+                const value = regexMatch[2] || regexMatch[3] || regexMatch[4] || '';
+                json[key] = value.trim();
+                console.log(`    [匹配成功] Key: \`${key}\`, Value: \`${json[key]}\``);
+            }
                 // match[2] 是 """..."""
                 // match[3] 是 "..."
                 // match[4] 是 '...'
