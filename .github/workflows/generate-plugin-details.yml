@@ -193,7 +193,7 @@ jobs:
           
           function parseMetadata(content) {
             // 匹配 __plugin_meta__ = PluginMetadata(...)
-            const match = content.match(/__plugin_meta__\s*=\s*PluginMetadata\s*\(([\s\S]*?)\)/);
+            const match = content.match(/__plugin_meta__\s*=\s*PluginMetadata\s*\(([\s\S]*?)\)\s*(?=\n\S|\n\n|$)/);
             if (!match || !match[1]) {
               console.warn('  [解析器] 阶段 1 失败: 未找到 `__plugin_meta__ = PluginMetadata(...)` 结构。');
               return null;
