@@ -210,13 +210,6 @@ jobs:
                 json[key] = value.trim();
                 console.log(`    [匹配成功] Key: \`${key}\`, Value: \`${json[key]}\``);
             }
-                // match[2] 是 """..."""
-                // match[3] 是 "..."
-                // match[4] 是 '...'
-                const value = match[2] || match[3] || match[4] || '';
-                json[key] = value.trim();
-                console.log(`    [匹配成功] Key: \`${key}\`, Value: \`${json[key]}\``);
-            }
             console.log('  [解析器] 阶段 2 结束: 正则表达式扫描完毕。');
 
             // 阶段 3: 返回结果
