@@ -40,8 +40,34 @@ jobs:
 
           async function main() {
             try {
+              console.log('🚀 开始生成插件详情...');
+              console.log('正在读取 plugins.json 文件...');
               const plugins = JSON.parse(fs.readFileSync('plugins.json', 'utf8'));
-              console.log(`在 plugins.json 中找到 ${plugins.length} 个插件`);
+              console.log(`✅ 成功读取 plugins.json，发现 ${plugins.length} 个插件`);
+
+              // 读取现有的 plugin_details.json 以保留 createdAt 时间
+              let existingDetails = new Map();
+              if (fs.existsSync('plugin_details.json')) {
+                console.log('发现现有的 plugin_details.json，正在读取...');
+                const oldDetailsContent = fs.readFileSync('plugin_details.json', 'utf8');
+                if (oldDetailsContent) {
+                  try {
+                    const oldDetails = JSON.parse(oldDetailsContent);
+                    if (Array.isArray(oldDetails)) {
+                      for (const detail of oldDetails) {
+                        existingDetails.set(detail.id, detail.createdAt);
+                      }
+                      console.log(`✅ 成功读取 ${existingDetails.size} 个现有插件的创建时间`);
+                    } else {
+                      console.warn('⚠️ plugin_details.json 文件内容不是一个有效的数组，将忽略现有创建时间。');
+                    }
+                  } catch (e) {
+                    console.warn(`⚠️ 解析 plugin_details.json 文件失败，将忽略现有创建时间。错误：${e.message}`);
+                  }
+                } else {
+                  console.log('ℹ️ plugin_details.json 文件为空，无需读取创建时间。');
+                }
+              }
 
               // 跳过第一个插件
               const pluginsToProcess = plugins.slice(1);
@@ -56,10 +82,12 @@ jobs:
                   console.log(`仓库地址：${plugin.repositoryUrl}`);
                   const manifest = await fetchManifest(plugin.repositoryUrl);
                   
+                  const createdAt = existingDetails.get(plugin.id) || new Date().toISOString();
+
                   pluginDetails.push({
                     id: plugin.id,
                     manifest: manifest,
-                    createdAt: new Date().toISOString()
+                    createdAt: createdAt
                   });
                   
                   console.log(`✅ 成功处理插件：${plugin.id}`);
@@ -110,13 +138,13 @@ jobs:
           }
 
           async function fetchManifest(repoUrl) {
+            console.log(`\n🔍 开始为 ${repoUrl} 获取清单...`);
             const branches = ['main', 'master'];
             const filePaths = ['__init__.py', 'src/__init__.py', 'app/__init__.py']; // 常见路径
 
             for (const branch of branches) {
               for (const path of filePaths) {
                 const rawUrl = repoUrl.replace('github.com', 'raw.githubusercontent.com') + `/${branch}/${path}`;
-                console.log(`尝试从 ${branch} 分支的 ${path} 获取元数据：${rawUrl}`);
                 
                 try {
                   const fileContent = await fetchFileContent(rawUrl);
@@ -126,27 +154,37 @@ jobs:
                     return metadata;
                   }
                 } catch (error) {
-                  console.log(`❌ 在 ${branch} 分支的 ${path} 获取失败: ${error.message}`);
                 }
               }
             }
 
+            console.error(`❌ 在所有预设路径和分支中都未能找到 ${repoUrl} 的有效元数据。`);
             throw new Error(`无法从任何分支或路径获取有效的 __plugin_meta__。请检查仓库结构和文件内容。仓库地址：${repoUrl}`);
           }
 
           function fetchFileContent(url) {
             return new Promise((resolve, reject) => {
+              console.log(`[GET] -> 正在请求 URL: ${url}`);
               const req = https.get(url, res => {
                 if (res.statusCode !== 200) {
+                  console.error(`[${res.statusCode}] <- 请求 ${url} 失败。`);
                   return reject(new Error(`状态码：${res.statusCode}`));
                 }
+                console.log(`[200 OK] <- 收到来自 ${url} 的成功响应。`);
                 let data = '';
                 res.on('data', chunk => data += chunk);
                 res.on('end', () => resolve(data));
-                res.on('error', err => reject(new Error(`读取响应数据时出错：${err.message}`)));
+                res.on('error', err => {
+                  console.error(`读取响应数据时出错: ${err.message}`);
+                  reject(new Error(`读取响应数据时出错：${err.message}`));
+                });
               });
-              req.on('error', err => reject(new Error(`网络错误：${err.message}`)));
+              req.on('error', err => {
+                console.error(`网络错误: ${err.message}`);
+                reject(new Error(`网络错误：${err.message}`));
+              });
               req.setTimeout(10000, () => {
+                console.error(`请求超时: ${url}`);
                 req.destroy();
                 reject(new Error(`请求超时`));
               });
@@ -155,16 +193,19 @@ jobs:
           
           function parseMetadata(content) {
             // 匹配 __plugin_meta__ = PluginMetadata(...)
-            const match = content.match(/__plugin_meta__\s*=\s*PluginMetadata\s*\(([\s\S]*?)\)/);
+            const match = content.match(/__plugin_meta__\s*=\s*PluginMetadata\s*\(([\s\S]*?)\)\s*(?=\n\S|\n\n|$)/);
             if (!match || !match[1]) {
+              console.warn('  [解析器] 阶段 1 失败: 未找到 `__plugin_meta__ = PluginMetadata(...)` 结构。');
               return null;
             }
-            
             let metadataStr = match[1];
+            console.log('  [解析器] 阶段 1 成功: 已定位到 `PluginMetadata` 的参数内容。');
+            console.log(`  [解析器] 阶段 1 内容: ${metadataStr.trim()}`);
+            
             const json = {};
             
             // 匹配键值对
-            const regex = /(\w+)\s*=\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\[.*?\]|\{.*?\}|[\w\.]+)/g;
+            const regex = /(\w+)\s*=\s*((?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\[(?:\\.|[^\]])*\]|\{(?:\\.|[^\}])*\}|[\w\.]+))/gs;
             let item;
             while ((item = regex.exec(metadataStr)) !== null) {
                const key = item[1];
@@ -176,12 +217,21 @@ jobs:
                                 .replace(/\bNone\b/g, 'null')
                                 .replace(/'/g, '"');
                    json[key] = JSON.parse(value);
+                   console.log(`    [调试] 解析成功: ${key} = ${JSON.stringify(json[key])}`);
                } catch (e) {
                    json[key] = value.replace(/^['"]|['"]$/g, ''); // 作为字符串
+                   console.warn(`    [调试] JSON.parse 失败，已回退为字符串: ${key} = "${json[key]}"`);
                }
             }
             
-            return Object.keys(json).length > 0 ? json : null;
+            if (Object.keys(json).length > 0) {
+              console.log(`  [解析器] 阶段 2 成功: 解析完成，共获得 ${Object.keys(json).length} 个键值对。`);
+              console.log(`  [解析器] 最终结果: ${JSON.stringify(json, null, 2)}`);
+            } else {
+              console.warn('  [解析器] 阶段 2 失败: 未能从 __plugin_meta__ 中解析出任何键值对。');
+              return null;
+            }
+            return json;
           }
 
           main();

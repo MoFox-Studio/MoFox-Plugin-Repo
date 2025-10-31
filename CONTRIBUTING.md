@@ -21,12 +21,12 @@
 
 ## 提交步骤
 
-1.  **Fork 本仓库**：点击本仓库页面右上角的 **"Fork"** 按钮，将 `minecraft1024a/MoFox-Plugin-Repo` 仓库复刻到您自己的 GitHub 账户下。
+1.  **Fork 本仓库**：点击本仓库页面右上角的 **"Fork"** 按钮，将 `MoFox-Studio/MoFox-Plugin-Repo` 仓库复刻到您自己的 GitHub 账户下。
 
 2.  **Clone 您的 Fork**：将您复刻的仓库克隆到您的本地电脑。
     ```bash
-    git clone https://github.com/YOUR-USERNAME/plugin-repo.git
-    cd plugin-repo
+    git clone https://github.com/YOUR-USERNAME/mofox-plugin-repo.git
+    cd mofox-plugin-repo
     ```
     *(请将 `YOUR-USERNAME` 替换为您自己的 GitHub 用户名)*
 
