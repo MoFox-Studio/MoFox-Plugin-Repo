@@ -189,31 +189,46 @@ jobs:
             }
 
             console.log('  [调试] 成功匹配到 __plugin_meta__，准备将其转换为 JSON...');
-            let pyDictStr = `{${match[1]}}`;
+            // 移除末尾可能存在的逗号和空白
+            let paramsStr = match[1].trim().replace(/,$/, '').trim();
 
             // 1. 移除注释
-            pyDictStr = pyDictStr.replace(/#.*$/gm, '');
+            paramsStr = paramsStr.replace(/#.*$/gm, '');
 
             // 2. 替换 Python 的布尔值和 None
-            pyDictStr = pyDictStr.replace(/\bTrue\b/g, 'true')
+            paramsStr = paramsStr.replace(/\bTrue\b/g, 'true')
                                  .replace(/\bFalse\b/g, 'false')
                                  .replace(/\bNone\b/g, 'null');
 
             // 3. 将三引号字符串统一为单行，并转义
-            pyDictStr = pyDictStr.replace(/"""([\s\S]*?)"""/g, (match, p1) => `"${p1.replace(/\n/g, '\\n').replace(/"/g, '\\"')}"`);
-            pyDictStr = pyDictStr.replace(/'''([\s\S]*?)'''/g, (match, p1) => `"${p1.replace(/\n/g, '\\n').replace(/"/g, '\\"')}"`);
+            paramsStr = paramsStr.replace(/"""([\s\S]*?)"""/g, (match, p1) => `"${p1.replace(/\n/g, '\\n').replace(/"/g, '\\"')}"`);
+            paramsStr = paramsStr.replace(/'''([\s\S]*?)'''/g, (match, p1) => `"${p1.replace(/\n/g, '\\n').replace(/"/g, '\\"')}"`);
 
-            // 4. 将单引号字符串统一为双引号
-            pyDictStr = pyDictStr.replace(/'/g, '"');
+            // 4. 将所有单引号统一为双引号（除了已经被转义的）
+            paramsStr = paramsStr.replace(/'/g, '"');
 
-            // 5. 为字典的键添加双引号
-            pyDictStr = pyDictStr.replace(/([{,]\s*)(\w+)\s*:/g, '$1"$2":');
+            // 5. 为参数名添加双引号 (key=value -> "key":value)
+            // 正则表达式解释:
+            // (\w+)\s*=\s*  匹配一个或多个单词字符（键），后面跟着可选的空格，一个等号，和可选的空格
+            // (?=...)       是一个正向先行断言，确保后面的内容是...
+            // (?:           非捕获组的开始
+            //   "           匹配一个双引号
+            //   |           或者
+            //   \[          匹配一个左方括号（数组开始）
+            //   |           或者
+            //   \{          匹配一个左大括号（对象开始）
+            //   |           或者
+            //   \d+         匹配一个或多个数字
+            //   |           或者
+            //   true|false|null 匹配布尔值或null
+            // )             非捕获组的结束
+            paramsStr = paramsStr.replace(/(\w+)\s*=\s*(?=(?:"|\[|\{|\d+|true|false|null))/g, '"$1": ');
             
-            // 6. 移除末尾多余的逗号
-            pyDictStr = pyDictStr.replace(/,\s*([}\]])/g, '$1');
-            
+            // 6. 将整个字符串包裹成一个 JSON 对象
+            const jsonStr = `{${paramsStr}}`;
+
             try {
-              const metadata = JSON.parse(pyDictStr);
+              const metadata = JSON.parse(jsonStr);
               console.log(`  [调试] 解析完成，最终对象: ${JSON.stringify(metadata, null, 2)}`);
               return metadata;
             } catch (error) {
