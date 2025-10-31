@@ -11,6 +11,7 @@
         "id": "dice-and-tarot",
         "repositoryUrl": "https://github.com/SolenmeChiara/mofox-dice-tarot-plugin"
     },
+    {
         "id": "bingyv92.Muteplgin",
         "repositoryUrl": "https://github.com/bingyv92/Muteplgin"
     },
@@ -18,6 +19,5 @@
         "id": "bingyv92.mofox_period_plugin",
         "repositoryUrl": "https://github.com/bingyv92/mofox_period_pluginn"
     }
- 
 ]
 
