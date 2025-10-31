@@ -223,11 +223,11 @@ jobs:
             if (Object.keys(json).length > 0) {
               console.log(`  [解析器] 阶段 3 成功: 解析完成，共获得 ${Object.keys(json).length} 个键值对。`);
               console.log(`  [解析器] 最终结果: ${JSON.stringify(json, null, 2)}`);
-              return json;
             } else {
               console.error('  [解析器] 阶段 3 失败: 未能从 `__plugin_meta__` 中解析出任何有效数据。请检查格式。');
               return null;
             }
+            return json;
           }
 
           main();
