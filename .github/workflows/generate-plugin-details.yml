@@ -181,8 +181,7 @@ jobs:
           }
           
           function parseMetadata(content) {
-            console.log('  [解析器] 启动元数据解析流程...');
-            // 阶段 1: 粗略匹配 __plugin_meta__ 块
+            // 匹配 __plugin_meta__ = PluginMetadata(...)
             const match = content.match(/__plugin_meta__\s*=\s*PluginMetadata\s*\(([\s\S]*?)\)/);
             if (!match || !match[1]) {
               console.warn('  [解析器] 阶段 1 失败: 未找到 `__plugin_meta__ = PluginMetadata(...)` 结构。');
@@ -190,34 +189,35 @@ jobs:
             }
             console.log('  [解析器] 阶段 1 成功: 已定位到 `PluginMetadata` 的参数内容。');
             
-            const metadataStr = match[1].trim();
+            let metadataStr = match[1];
             const json = {};
             
-            // 阶段 2: 升级版解析逻辑，使用正则表达式处理多行键值对
-            console.log('  [解析器] 阶段 2 开始: 使用正则表达式模式进行解析...');
-            const singleLineContent = metadataStr.replace(/\n\s*/g, ' '); // 将多行合并为单行，方便匹配
-            console.log(`    [预处理] 合并后的内容: ${singleLineContent}`);
-
-            const regex = /(\w+)\s*=\s*(?:"""([\s\S]*?)"""|"([^"]*?)"|'([^']*?)')/g;
-            let regexMatch;
-
-            while ((regexMatch = regex.exec(singleLineContent)) !== null) {
-                const key = regexMatch[1];
-                // match[2] 是 """..."""
-                // match[3] 是 "..."
-                // match[4] 是 '...'
-                const value = regexMatch[2] || regexMatch[3] || regexMatch[4] || '';
-                json[key] = value.trim();
-                console.log(`    [匹配成功] Key: \`${key}\`, Value: \`${json[key]}\``);
+            // 匹配键值对
+            const regex = /(\w+)\s*=\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\[.*?\]|\{.*?\}|[\w\.]+)/g;
+            let item;
+            while ((item = regex.exec(metadataStr)) !== null) {
+               const key = item[1];
+               let value = item[2];
+               try {
+                   // 转换 Python 字面量
+                   const originalValue = value;
+                   value = value.replace(/\bTrue\b/g, 'true')
+                                .replace(/\bFalse\b/g, 'false')
+                                .replace(/\bNone\b/g, 'null')
+                                .replace(/'/g, '"');
+                   json[key] = JSON.parse(value);
+                   console.log(`    [调试] 解析成功: ${key} = ${JSON.stringify(json[key])}`);
+               } catch (e) {
+                   json[key] = value.replace(/^['"]|['"]$/g, ''); // 作为字符串
+                   console.warn(`    [调试] JSON.parse 失败，已回退为字符串: ${key} = "${json[key]}"`);
+               }
             }
-            console.log('  [解析器] 阶段 2 结束: 正则表达式扫描完毕。');
-
-            // 阶段 3: 返回结果
+            
             if (Object.keys(json).length > 0) {
               console.log(`  [解析器] 阶段 3 成功: 解析完成，共获得 ${Object.keys(json).length} 个键值对。`);
               console.log(`  [解析器] 最终结果: ${JSON.stringify(json, null, 2)}`);
             } else {
-              console.error('  [解析器] 阶段 3 失败: 未能从 `__plugin_meta__` 中解析出任何有效数据。请检查格式。');
+              console.log('  [调试] 未能从 __plugin_meta__ 中解析出任何键值对。');
               return null;
             }
             return json;
