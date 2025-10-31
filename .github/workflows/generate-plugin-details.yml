@@ -49,11 +49,24 @@ jobs:
               let existingDetails = new Map();
               if (fs.existsSync('plugin_details.json')) {
                 console.log('发现现有的 plugin_details.json，正在读取...');
-                const oldDetails = JSON.parse(fs.readFileSync('plugin_details.json', 'utf8'));
-                for (const detail of oldDetails) {
-                  existingDetails.set(detail.id, detail.createdAt);
+                const oldDetailsContent = fs.readFileSync('plugin_details.json', 'utf8');
+                if (oldDetailsContent) {
+                  try {
+                    const oldDetails = JSON.parse(oldDetailsContent);
+                    if (Array.isArray(oldDetails)) {
+                      for (const detail of oldDetails) {
+                        existingDetails.set(detail.id, detail.createdAt);
+                      }
+                      console.log(`✅ 成功读取 ${existingDetails.size} 个现有插件的创建时间`);
+                    } else {
+                      console.warn('⚠️ plugin_details.json 文件内容不是一个有效的数组，将忽略现有创建时间。');
+                    }
+                  } catch (e) {
+                    console.warn(`⚠️ 解析 plugin_details.json 文件失败，将忽略现有创建时间。错误：${e.message}`);
+                  }
+                } else {
+                  console.log('ℹ️ plugin_details.json 文件为空，无需读取创建时间。');
                 }
-                console.log(`✅ 成功读取 ${existingDetails.size} 个现有插件的创建时间`);
               }
 
               // 跳过第一个插件
