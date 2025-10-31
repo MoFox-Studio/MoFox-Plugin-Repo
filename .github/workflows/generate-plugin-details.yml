@@ -145,7 +145,6 @@ jobs:
             for (const branch of branches) {
               for (const path of filePaths) {
                 const rawUrl = repoUrl.replace('github.com', 'raw.githubusercontent.com') + `/${branch}/${path}`;
-                console.log(`尝试从 ${branch} 分支的 ${path} 获取元数据：${rawUrl}`);
                 
                 try {
                   const fileContent = await fetchFileContent(rawUrl);
@@ -155,7 +154,6 @@ jobs:
                     return metadata;
                   }
                 } catch (error) {
-                  console.log(`❌ 在 ${branch} 分支的 ${path} 获取失败: ${error.message}`);
                 }
               }
             }
@@ -207,14 +205,13 @@ jobs:
             const json = {};
             
             // 匹配键值对
-            const regex = /(\w+)\s*=\s*("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\[.*?\]|\{.*?\}|[\w\.]+)/g;
+            const regex = /(\w+)\s*=\s*((?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\[(?:\\.|[^\]])*\]|\{(?:\\.|[^\}])*\}|[\w\.]+))/gs;
             let item;
             while ((item = regex.exec(metadataStr)) !== null) {
                const key = item[1];
                let value = item[2];
                try {
                    // 转换 Python 字面量
-                   const originalValue = value;
                    value = value.replace(/\bTrue\b/g, 'true')
                                 .replace(/\bFalse\b/g, 'false')
                                 .replace(/\bNone\b/g, 'null')
