@@ -21,7 +21,6 @@ defineProps({
       <div
         v-for="(plugin, index) in featuredPlugins"
         :key="`featured-${plugin.id}`"
-        @click="showPluginDetails(plugin)"
         :class="[
           'featured-card group rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border cursor-pointer relative overflow-hidden',
           isDarkMode
@@ -29,7 +28,7 @@ defineProps({
             : 'bg-white border-gray-100'
         ]"
       >
-        <div class="flex flex-col h-full">
+        <div @click="showPluginDetails(plugin)" class="flex flex-col h-full cursor-pointer">
           <div class="flex items-start justify-between mb-4">
             <div class="flex items-center gap-4">
               <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl flex items-center justify-center">
@@ -70,10 +69,17 @@ defineProps({
             </div>
           </div>
           
-          <div class="mt-auto flex justify-end gap-2">
+          <div class="mt-auto flex justify-end gap-2" @click.stop>
             <button
-              @click.stop="openDownloadModal(plugin)"
-              class="px-5 py-2 rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200 text-sm bg-gradient-to-r from-green-500 to-cyan-600 text-white cursor-pointer"
+              @click="openDownloadModal(plugin)"
+              :disabled="!plugin.repositoryUrl || plugin.repositoryUrl.trim() === ''"
+              :class="[
+                'px-5 py-2 rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200 text-sm',
+                plugin.repositoryUrl && plugin.repositoryUrl.trim() !== ''
+                  ? 'bg-gradient-to-r from-green-500 to-cyan-600 text-white cursor-pointer'
+                  : 'bg-gray-400 text-gray-200 cursor-not-allowed'
+              ]"
+              :title="plugin.repositoryUrl && plugin.repositoryUrl.trim() !== '' ? '下载插件' : '暂无下载链接'"
             >
               <Icon icon="mdi:download" class="inline mr-1" />
               下载

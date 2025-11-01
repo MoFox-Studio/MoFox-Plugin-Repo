@@ -14,7 +14,6 @@ defineProps({
 
 <template>
   <div
-    @click="showPluginDetails(plugin)"
     :class="[
       'plugin-list-item group rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 border cursor-pointer',
       isDarkMode
@@ -33,7 +32,7 @@ defineProps({
       </div>
       
       <!-- 插件信息 -->
-      <div class="flex-1 min-w-0">
+      <div @click="showPluginDetails(plugin)" class="flex-1 min-w-0 cursor-pointer">
         <div class="flex items-start justify-between mb-4">
           <div class="flex-1 pr-4">
             <h3 :class="[
@@ -70,7 +69,14 @@ defineProps({
             <div class="flex items-center gap-2">
                <button
                  @click.stop="openDownloadModal(plugin)"
-                 class="px-5 py-2 rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200 text-sm bg-gradient-to-r from-green-500 to-cyan-600 text-white cursor-pointer"
+                 :disabled="!plugin.repositoryUrl || plugin.repositoryUrl.trim() === ''"
+                 :class="[
+                   'px-5 py-2 rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200 text-sm',
+                   plugin.repositoryUrl && plugin.repositoryUrl.trim() !== ''
+                     ? 'bg-gradient-to-r from-green-500 to-cyan-600 text-white cursor-pointer'
+                     : 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                 ]"
+                 :title="plugin.repositoryUrl && plugin.repositoryUrl.trim() !== '' ? '下载插件' : '暂无下载链接'"
                >
                  <Icon icon="mdi:download" class="inline mr-1" />
                  下载

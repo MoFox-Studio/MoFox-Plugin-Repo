@@ -26,7 +26,6 @@ const formattedDate = computed(() => {
 
 <template>
   <div
-    @click="showPluginDetails(plugin)"
     :class="[
       'plugin-card group rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border cursor-pointer relative',
       isDarkMode
@@ -38,7 +37,7 @@ const formattedDate = computed(() => {
       '--sweep-delay': `${Math.floor(index / 3) * 0.15 + (index % 3) * 0.1}s`
     }"
   >
-    <div class="pb-12"> <!-- 为底部按钮预留空间 -->
+    <div @click="showPluginDetails(plugin)" class="pb-12 cursor-pointer"> <!-- 为底部按钮预留空间 -->
       <div class="flex items-start justify-between mb-4">
         <div class="flex items-center gap-3">
           <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl flex items-center justify-center">
@@ -89,12 +88,15 @@ const formattedDate = computed(() => {
     <div class="absolute bottom-4 right-4 flex items-center gap-2">
       <button
         @click.stop="openDownloadModal(plugin)"
+        :disabled="!plugin.repositoryUrl || plugin.repositoryUrl.trim() === ''"
         :class="[
           'px-4 py-2 rounded-lg font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200',
-          'bg-gradient-to-r from-green-500 to-emerald-600 text-white cursor-pointer'
+          plugin.repositoryUrl && plugin.repositoryUrl.trim() !== ''
+            ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white cursor-pointer'
+            : 'bg-gray-400 text-gray-200 cursor-not-allowed'
         ]"
-        style="background: linear-gradient(135deg, #22c55e 0%, #10b981 100%)"
-        title="下载插件"
+        :style="plugin.repositoryUrl && plugin.repositoryUrl.trim() !== '' ? 'background: linear-gradient(135deg, #22c55e 0%, #10b981 100%)' : ''"
+        :title="plugin.repositoryUrl && plugin.repositoryUrl.trim() !== '' ? '下载插件' : '暂无下载链接'"
       >
         <Icon icon="mdi:download" class="inline mr-1" />
         下载

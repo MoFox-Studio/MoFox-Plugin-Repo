@@ -243,11 +243,11 @@ function downloadPlugin() {
             <div class="flex gap-4">
               <button
                 @click="downloadPlugin"
-                :disabled="!selectedBranch"
+                :disabled="!selectedBranch || !pluginRepoUrl"
                 :class="[
                   'flex-1 px-6 py-3 rounded-xl font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200',
                   'bg-gradient-to-r from-blue-500 to-indigo-600 text-white',
-                  !selectedBranch ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                  !selectedBranch || !pluginRepoUrl ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
                 ]"
               >
                 <Icon icon="mdi:download" class="inline mr-2" />

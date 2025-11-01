@@ -1,7 +1,7 @@
 ### 新增插件提交
 
 **插件仓库 URL:**
-
+(请提供您的插件仓库的完整 URL，例如: `https://github.com/username/repo`)
 ---
 
 ### 核对清单 (Checklist)
