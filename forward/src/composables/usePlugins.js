@@ -21,7 +21,7 @@ const fetchPlugins = async () => {
   error.value = null
   try {
     loadingStatus.value = '正在从 GitHub API 获取插件列表...'
-    const response = await fetch('https://api.github.com/repos/minecraft1024a/MoFox-Plugin-Repo/contents/plugin_details.json')
+    const response = await fetch('https://api.github.com/repos/MoFox-Studio/MoFox-Plugin-Repo/contents/plugin_details.json')
     if (!response.ok) {
       throw new Error(`HTTP Error: ${response.status} - 获取插件数据失败`)
     }
