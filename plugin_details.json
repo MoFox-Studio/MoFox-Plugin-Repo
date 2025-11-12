@@ -66,5 +66,28 @@
       "repository_url": "https://github.com/bingyv92/mofox_period_plugin"
     },
     "createdAt": "2025-10-31T13:20:25.415Z"
+  },
+  {
+    "id": "minecraft1024a.Bot_Status_Plugin",
+    "manifest": {
+      "name": "BotStatus",
+      "description": "一个用于生成机器人和系统状态图的插件。",
+      "usage": "/status",
+      "version": "1.0.0",
+      "author": "YiShan",
+      "license": "GPL-v3.0-or-later",
+      "repository_url": "https://github.com/minecraft1024a",
+      "keywords": [
+        "status",
+        "statistics",
+        "management"
+      ],
+      "extra": "{\n        \"plugin_type\": \"info\",\n    }",
+      "python_dependencies": [
+        "psutil",
+        "Pillow"
+      ]
+    },
+    "createdAt": "2025-11-12T09:09:57.944Z"
   }
 ]
