@@ -144,7 +144,7 @@ function downloadPlugin() {
 
 <template>
   <Transition name="modal-backdrop">
-    <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div v-if="showModal && plugin" class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
       <!-- Backdrop -->
       <div
         class="fixed inset-0 bg-black/50 backdrop-blur-sm"
@@ -153,40 +153,40 @@ function downloadPlugin() {
 
       <!-- Modal Content -->
       <Transition name="modal-content" appear>
-        <div v-if="showModal" :class="[
-          'relative w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-2xl border shadow-2xl',
+        <div v-if="showModal && plugin" :class="[
+          'relative w-full max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-hidden rounded-xl sm:rounded-2xl border shadow-2xl',
           isDarkMode ? 'bg-dark-bg border-dark-border' : 'bg-white border-light-border'
         ]">
           <!-- Close Button -->
           <button 
             @click="closeModal"
             :class="[
-              'absolute top-4 right-4 z-10 w-10 h-10 rounded-xl flex items-center justify-center transition-colors',
+              'absolute top-2 right-2 sm:top-4 sm:right-4 z-10 w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center transition-colors',
               isDarkMode 
                 ? 'bg-dark-surface hover:bg-dark-border text-gray-400 hover:text-white' 
                 : 'bg-light-surface hover:bg-light-muted text-gray-500 hover:text-gray-900'
             ]"
           >
-            <Icon icon="mdi:close" class="text-xl" />
+            <Icon icon="mdi:close" class="text-lg sm:text-xl" />
           </button>
           
-          <div v-if="plugin" class="overflow-y-auto max-h-[90vh]">
+          <div class="overflow-y-auto max-h-[95vh] sm:max-h-[90vh]">
             <!-- Header -->
             <div :class="[
-              'p-6 border-b',
+              'p-4 sm:p-6 border-b',
               isDarkMode ? 'bg-dark-surface border-dark-border' : 'bg-light-surface border-light-border'
             ]">
-              <div class="flex items-start gap-5 pr-10">
-                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-lg flex-shrink-0">
-                  <Icon icon="mdi:download" class="text-2xl text-white" />
+              <div class="flex items-start gap-3 sm:gap-5 pr-8 sm:pr-10">
+                <div class="w-11 h-11 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-lg flex-shrink-0">
+                  <Icon icon="mdi:download" class="text-xl sm:text-2xl text-white" />
                 </div>
                 <div class="flex-1 min-w-0">
                   <h2 :class="[
-                    'text-xl font-bold mb-1 truncate',
+                    'text-lg sm:text-xl font-bold mb-0.5 sm:mb-1 truncate',
                     isDarkMode ? 'text-white' : 'text-gray-900'
                   ]">下载 {{ plugin.name }}</h2>
                   <p :class="[
-                    'text-sm',
+                    'text-xs sm:text-sm',
                     isDarkMode ? 'text-gray-400' : 'text-gray-500'
                   ]">选择分支并下载插件</p>
                 </div>
@@ -194,14 +194,14 @@ function downloadPlugin() {
             </div>
 
             <!-- Body -->
-            <div class="p-6 space-y-6">
+            <div class="p-4 sm:p-6 space-y-4 sm:space-y-6">
               <!-- Branch Selection -->
               <div>
                 <h3 :class="[
-                  'text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2',
+                  'text-xs sm:text-sm font-semibold uppercase tracking-wider mb-2 sm:mb-3 flex items-center gap-1.5 sm:gap-2',
                   isDarkMode ? 'text-gray-400' : 'text-gray-500'
                 ]">
-                  <Icon icon="mdi:source-branch" />
+                  <Icon icon="mdi:source-branch" class="text-sm sm:text-base" />
                   选择分支
                 </h3>
                 <div class="relative">
@@ -209,7 +209,7 @@ function downloadPlugin() {
                     v-model="selectedBranch"
                     :disabled="isLoadingBranches || branches.length === 0"
                     :class="[
-                      'w-full px-4 py-3 rounded-xl border appearance-none transition-all cursor-pointer',
+                      'w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border appearance-none transition-all cursor-pointer text-sm',
                       isDarkMode 
                         ? 'bg-dark-surface border-dark-border text-white focus:border-primary-500' 
                         : 'bg-light-surface border-light-border text-gray-900 focus:border-primary-500',
@@ -224,7 +224,7 @@ function downloadPlugin() {
                     </option>
                   </select>
                   <Icon icon="mdi:chevron-down" :class="[
-                    'absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none',
+                    'absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 pointer-events-none text-sm sm:text-base',
                     isDarkMode ? 'text-gray-500' : 'text-gray-400'
                   ]" />
                 </div>
@@ -233,33 +233,33 @@ function downloadPlugin() {
               <!-- README Preview -->
               <div>
                 <h3 :class="[
-                  'text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2',
+                  'text-xs sm:text-sm font-semibold uppercase tracking-wider mb-2 sm:mb-3 flex items-center gap-1.5 sm:gap-2',
                   isDarkMode ? 'text-gray-400' : 'text-gray-500'
                 ]">
-                  <Icon icon="mdi:book-open-variant" />
+                  <Icon icon="mdi:book-open-variant" class="text-sm sm:text-base" />
                   README.md
                 </h3>
                 <div :class="[
-                  'prose prose-sm max-w-none p-4 rounded-xl border h-64 overflow-y-auto relative',
+                  'prose prose-sm max-w-none p-3 sm:p-4 rounded-lg sm:rounded-xl border h-48 sm:h-64 overflow-y-auto relative',
                   isDarkMode 
                     ? 'prose-invert bg-dark-surface border-dark-border' 
                     : 'bg-light-surface border-light-border'
                 ]">
                   <div v-if="isLoadingReadme" class="absolute inset-0 flex items-center justify-center">
-                    <div class="flex items-center gap-3">
-                      <div class="w-5 h-5 border-2 border-primary-500/30 border-t-primary-500 rounded-full animate-spin"></div>
-                      <span :class="isDarkMode ? 'text-gray-400' : 'text-gray-500'">正在加载...</span>
+                    <div class="flex items-center gap-2 sm:gap-3">
+                      <div class="w-4 h-4 sm:w-5 sm:h-5 border-2 border-primary-500/30 border-t-primary-500 rounded-full animate-spin"></div>
+                      <span :class="['text-xs sm:text-sm', isDarkMode ? 'text-gray-400' : 'text-gray-500']">正在加载...</span>
                     </div>
                   </div>
                   <div v-else-if="errorReadme" :class="[
-                    'text-sm',
+                    'text-xs sm:text-sm',
                     isDarkMode ? 'text-red-400' : 'text-red-500'
                   ]">
                     <p>{{ errorReadme }}</p>
                   </div>
-                  <div v-else-if="readmeContent" v-html="readmeContent"></div>
+                  <div v-else-if="readmeContent" v-html="readmeContent" class="text-xs sm:text-sm"></div>
                   <div v-else :class="[
-                    'text-sm',
+                    'text-xs sm:text-sm',
                     isDarkMode ? 'text-gray-500' : 'text-gray-400'
                   ]">
                     <p>没有可预览的 README 内容。</p>
@@ -270,26 +270,26 @@ function downloadPlugin() {
 
             <!-- Footer -->
             <div :class="[
-              'p-6 border-t flex gap-3',
+              'p-4 sm:p-6 border-t flex flex-col sm:flex-row gap-2 sm:gap-3',
               isDarkMode ? 'bg-dark-surface border-dark-border' : 'bg-light-surface border-light-border'
             ]">
               <button
                 @click="downloadPlugin"
                 :disabled="!selectedBranch || !pluginRepoUrl"
                 :class="[
-                  'flex-1 px-6 py-3 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-2',
+                  'flex-1 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2',
                   selectedBranch && pluginRepoUrl
                     ? 'bg-primary-500 hover:bg-primary-600 text-white hover:shadow-glow'
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:text-gray-600'
                 ]"
               >
-                <Icon icon="mdi:download" />
+                <Icon icon="mdi:download" class="text-base sm:text-lg" />
                 下载插件
               </button>
               <button
                 @click="closeModal"
                 :class="[
-                  'px-6 py-3 rounded-xl font-medium transition-all duration-200',
+                  'px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm font-medium transition-all duration-200',
                   isDarkMode 
                     ? 'bg-dark-border hover:bg-dark-muted text-gray-300' 
                     : 'bg-light-muted hover:bg-gray-200 text-gray-700'

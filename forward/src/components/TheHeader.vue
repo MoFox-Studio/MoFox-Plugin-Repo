@@ -15,35 +15,35 @@ defineProps({
       : 'bg-white/80 border-light-border',
     'backdrop-blur-xl border-b'
   ]">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-14 sm:h-16">
         <!-- Logo & Brand -->
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 sm:gap-3">
           <div class="relative">
-            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-glow">
-              <Icon icon="mdi:puzzle" class="text-lg text-white" />
+            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-glow">
+              <Icon icon="mdi:puzzle" class="text-base sm:text-lg text-white" />
             </div>
-            <div class="absolute -inset-1 rounded-xl bg-primary-500/20 blur-sm -z-10"></div>
+            <div class="absolute -inset-1 rounded-xl bg-primary-500/20 blur-sm -z-10 hidden sm:block"></div>
           </div>
           <div class="flex flex-col">
             <span :class="[
-              'text-lg font-bold tracking-tight transition-colors',
+              'text-base sm:text-lg font-bold tracking-tight transition-colors',
               isDarkMode ? 'text-white' : 'text-gray-900'
             ]">MoFox</span>
             <span :class="[
-              'text-xs font-medium -mt-0.5 transition-colors',
+              'text-[10px] sm:text-xs font-medium -mt-0.5 transition-colors hidden xs:block',
               isDarkMode ? 'text-gray-500' : 'text-gray-400'
             ]">Plugin Repository</span>
           </div>
         </div>
         
         <!-- Right Actions -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1.5 sm:gap-2">
           <!-- Theme Toggle -->
           <button 
             @click="toggleTheme"
             :class="[
-              'relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200',
+              'relative w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center transition-all duration-200',
               'hover:scale-105 active:scale-95',
               isDarkMode 
                 ? 'bg-dark-surface hover:bg-dark-border text-yellow-400' 
@@ -52,8 +52,8 @@ defineProps({
             :title="isDarkMode ? '切换到浅色模式' : '切换到深色模式'"
           >
             <Transition name="icon-switch" mode="out-in">
-              <Icon v-if="isDarkMode" key="sun" icon="mdi:white-balance-sunny" class="text-xl" />
-              <Icon v-else key="moon" icon="mdi:moon-waning-crescent" class="text-xl" />
+              <Icon v-if="isDarkMode" key="sun" icon="mdi:white-balance-sunny" class="text-lg sm:text-xl" />
+              <Icon v-else key="moon" icon="mdi:moon-waning-crescent" class="text-lg sm:text-xl" />
             </Transition>
           </button>
           
@@ -63,7 +63,7 @@ defineProps({
             target="_blank" 
             rel="noopener noreferrer"
             :class="[
-              'w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200',
+              'w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center transition-all duration-200',
               'hover:scale-105 active:scale-95',
               isDarkMode 
                 ? 'bg-white text-black hover:bg-gray-100' 
@@ -71,7 +71,7 @@ defineProps({
             ]"
             title="查看 GitHub 仓库"
           >
-            <Icon icon="mdi:github" class="text-xl" />
+            <Icon icon="mdi:github" class="text-lg sm:text-xl" />
           </a>
         </div>
       </div>

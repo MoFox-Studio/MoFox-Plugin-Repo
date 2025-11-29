@@ -42,6 +42,7 @@ const {
   showDownloadModal,
   selectedDownloadPlugin,
   openDownloadModal,
+  closeDownloadModal,
   showNotice,
   canCloseNotice,
   dontShowNoticeAgain,
@@ -108,7 +109,7 @@ onMounted(() => {
       :isDarkMode="isDarkMode"
       :showModal="showDownloadModal"
       :plugin="selectedDownloadPlugin"
-      :closeModal="() => showDownloadModal = false"
+      :closeModal="closeDownloadModal"
     />
 
     <NoticeModal
