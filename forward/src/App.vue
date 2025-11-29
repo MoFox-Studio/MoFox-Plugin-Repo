@@ -52,7 +52,7 @@ onMounted(() => {
 <template>
   <div :class="[
     'min-h-screen transition-colors duration-300 bg-grid',
-    isDarkMode ? 'dark bg-dark-bg' : 'bg-white'
+    isDarkMode ? 'dark bg-dark-bg' : 'bg-stone-100'
   ]">
     <TheHeader :isDarkMode="isDarkMode" :toggleTheme="toggleTheme" />
 

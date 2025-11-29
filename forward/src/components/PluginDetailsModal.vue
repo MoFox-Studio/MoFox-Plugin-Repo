@@ -163,7 +163,7 @@ function downloadPlugin() {
       <Transition name="modal-content" appear>
         <div v-if="showModal && selectedPlugin" :class="[
           'relative w-full max-w-3xl max-h-[95vh] sm:max-h-[90vh] overflow-hidden rounded-xl sm:rounded-2xl border shadow-2xl',
-          isDarkMode ? 'bg-dark-bg border-dark-border' : 'bg-white border-light-border'
+          isDarkMode ? 'bg-dark-bg border-dark-border' : 'bg-stone-50 border-light-border'
         ]">
           <!-- Close Button -->
           <button 
@@ -426,7 +426,7 @@ function downloadPlugin() {
               <!-- README Content -->
               <div :class="[
                 'readme-container rounded-xl border overflow-hidden',
-                isDarkMode ? 'bg-dark-surface border-dark-border' : 'bg-white border-light-border'
+                isDarkMode ? 'bg-dark-surface border-dark-border' : 'bg-stone-50 border-light-border'
               ]">
                 <!-- README Header -->
                 <div :class="[
@@ -505,7 +505,7 @@ function downloadPlugin() {
               <!-- Download Info -->
               <div v-if="selectedBranch" :class="[
                 'rounded-xl border overflow-hidden',
-                isDarkMode ? 'bg-dark-surface border-dark-border' : 'bg-white border-light-border'
+                isDarkMode ? 'bg-dark-surface border-dark-border' : 'bg-stone-50 border-light-border'
               ]">
                 <div :class="[
                   'flex items-center gap-2 px-4 py-3 border-b',
@@ -582,7 +582,7 @@ function downloadPlugin() {
                       'w-full pl-3 pr-8 py-2 rounded-lg border appearance-none transition-all cursor-pointer text-sm',
                       isDarkMode 
                         ? 'bg-dark-muted border-dark-border text-white focus:border-primary-500' 
-                        : 'bg-white border-light-border text-gray-900 focus:border-primary-500',
+                        : 'bg-stone-50 border-light-border text-gray-900 focus:border-primary-500',
                       (isLoadingBranches || branches.length === 0) ? 'opacity-50 cursor-not-allowed' : ''
                     ]"
                   >
