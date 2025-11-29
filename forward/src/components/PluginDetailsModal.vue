@@ -15,7 +15,7 @@ const props = defineProps({
   openDownloadModal: Function
 })
 
-// 当前 Tab：info | readme
+// 当前 Tab：info | readme | download
 const activeTab = ref('info')
 
 // 分支相关状态
@@ -254,6 +254,18 @@ function downloadPlugin() {
                   <Icon icon="mdi:file-document-outline" class="text-sm sm:text-base" />
                   README
                 </button>
+                <button
+                  @click="activeTab = 'download'"
+                  :class="[
+                    'flex-1 px-3 sm:px-4 py-2 sm:py-2.5 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex items-center justify-center gap-1.5',
+                    activeTab === 'download'
+                      ? 'bg-white shadow-sm text-primary-600 dark:bg-dark-surface dark:text-primary-400'
+                      : isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'
+                  ]"
+                >
+                  <Icon icon="mdi:download-outline" class="text-sm sm:text-base" />
+                  下载
+                </button>
               </div>
             </div>
             
@@ -411,43 +423,6 @@ function downloadPlugin() {
             
             <!-- Body - README Tab -->
             <div v-show="activeTab === 'readme'" class="p-4 sm:p-6 space-y-4 sm:space-y-5">
-              <!-- Branch Selection -->
-              <div :class="[
-                'rounded-xl p-4 border',
-                isDarkMode ? 'bg-dark-surface/50 border-dark-border' : 'bg-light-surface/50 border-light-border'
-              ]">
-                <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-                  <div class="flex items-center gap-2">
-                    <Icon icon="mdi:source-branch" :class="['text-lg', isDarkMode ? 'text-primary-400' : 'text-primary-500']" />
-                    <span :class="['text-sm font-medium', isDarkMode ? 'text-gray-300' : 'text-gray-700']">分支选择</span>
-                  </div>
-                  <div class="relative flex-1">
-                    <select
-                      v-model="selectedBranch"
-                      :disabled="isLoadingBranches || branches.length === 0"
-                      :class="[
-                        'w-full px-3 py-2 rounded-lg border appearance-none transition-all cursor-pointer text-sm pr-8',
-                        isDarkMode 
-                          ? 'bg-dark-bg border-dark-border text-white focus:border-primary-500' 
-                          : 'bg-white border-light-border text-gray-900 focus:border-primary-500',
-                        (isLoadingBranches || branches.length === 0) ? 'opacity-50 cursor-not-allowed' : ''
-                      ]"
-                    >
-                      <option v-if="isLoadingBranches" value="" disabled>正在加载分支...</option>
-                      <option v-else-if="errorBranches" value="" disabled>{{ errorBranches }}</option>
-                      <option v-else-if="branches.length === 0" value="" disabled>没有可用的分支</option>
-                      <option v-for="branch in branches" :key="branch.name" :value="branch.name">
-                        {{ branch.name }}
-                      </option>
-                    </select>
-                    <Icon icon="mdi:chevron-down" :class="[
-                      'absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-sm',
-                      isDarkMode ? 'text-gray-500' : 'text-gray-400'
-                    ]" />
-                  </div>
-                </div>
-              </div>
-
               <!-- README Content -->
               <div :class="[
                 'readme-container rounded-xl border overflow-hidden',
@@ -455,16 +430,21 @@ function downloadPlugin() {
               ]">
                 <!-- README Header -->
                 <div :class="[
-                  'flex items-center gap-2 px-4 py-3 border-b',
+                  'flex items-center justify-between gap-2 px-4 py-3 border-b',
                   isDarkMode ? 'bg-dark-muted border-dark-border' : 'bg-light-muted border-light-border'
                 ]">
-                  <Icon icon="mdi:file-document" :class="['text-base', isDarkMode ? 'text-gray-400' : 'text-gray-500']" />
-                  <span :class="['text-sm font-medium', isDarkMode ? 'text-gray-300' : 'text-gray-700']">README.md</span>
+                  <div class="flex items-center gap-2">
+                    <Icon icon="mdi:file-document" :class="['text-base', isDarkMode ? 'text-gray-400' : 'text-gray-500']" />
+                    <span :class="['text-sm font-medium', isDarkMode ? 'text-gray-300' : 'text-gray-700']">README.md</span>
+                  </div>
+                  <span v-if="selectedBranch" :class="['text-xs px-2 py-1 rounded-md', isDarkMode ? 'bg-dark-bg text-gray-400' : 'bg-light-surface text-gray-500']">
+                    <Icon icon="mdi:source-branch" class="inline text-xs mr-1" />{{ selectedBranch }}
+                  </span>
                 </div>
                 
                 <!-- README Body -->
                 <div :class="[
-                  'readme-content p-4 sm:p-6 h-72 sm:h-96 overflow-y-auto',
+                  'readme-content p-4 sm:p-6 h-80 sm:h-[28rem] overflow-y-auto',
                   isDarkMode ? 'readme-dark' : 'readme-light'
                 ]">
                   <!-- Loading State -->
@@ -504,50 +484,151 @@ function downloadPlugin() {
               </div>
             </div>
             
-            <!-- Footer -->
-            <div :class="[
-              'p-4 sm:p-6 border-t flex flex-col sm:flex-row gap-2 sm:gap-3',
-              isDarkMode ? 'bg-dark-surface border-dark-border' : 'bg-light-surface border-light-border'
-            ]">
+            <!-- Body - Download Tab -->
+            <div v-show="activeTab === 'download'" class="p-4 sm:p-6 space-y-4 sm:space-y-5">
+              <!-- Download Header Card -->
+              <div :class="[
+                'rounded-xl p-5 sm:p-6 border text-center',
+                isDarkMode ? 'bg-gradient-to-br from-dark-surface to-dark-muted border-dark-border' : 'bg-gradient-to-br from-white to-light-surface border-light-border'
+              ]">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-lg">
+                  <Icon icon="mdi:download" class="text-3xl sm:text-4xl text-white" />
+                </div>
+                <h3 :class="['text-lg sm:text-xl font-bold mb-2', isDarkMode ? 'text-white' : 'text-gray-900']">
+                  下载 {{ selectedPlugin.name }}
+                </h3>
+                <p :class="['text-sm', isDarkMode ? 'text-gray-400' : 'text-gray-500']">
+                  在下方选择分支后点击下载按钮获取插件源码
+                </p>
+              </div>
+              
+              <!-- Download Info -->
+              <div v-if="selectedBranch" :class="[
+                'rounded-xl border overflow-hidden',
+                isDarkMode ? 'bg-dark-surface border-dark-border' : 'bg-white border-light-border'
+              ]">
+                <div :class="[
+                  'flex items-center gap-2 px-4 py-3 border-b',
+                  isDarkMode ? 'bg-dark-muted border-dark-border' : 'bg-light-muted border-light-border'
+                ]">
+                  <Icon icon="mdi:package-variant" :class="['text-base', isDarkMode ? 'text-green-400' : 'text-green-500']" />
+                  <span :class="['text-sm font-medium', isDarkMode ? 'text-gray-300' : 'text-gray-700']">下载信息</span>
+                </div>
+                <div class="p-4 space-y-3">
+                  <div class="flex items-center justify-between">
+                    <span :class="['text-xs', isDarkMode ? 'text-gray-500' : 'text-gray-400']">当前分支</span>
+                    <span :class="['text-sm font-medium flex items-center gap-1.5', isDarkMode ? 'text-primary-400' : 'text-primary-600']">
+                      <Icon icon="mdi:source-branch" class="text-sm" />
+                      {{ selectedBranch }}
+                    </span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span :class="['text-xs', isDarkMode ? 'text-gray-500' : 'text-gray-400']">文件名</span>
+                    <span :class="['text-sm font-mono', isDarkMode ? 'text-gray-300' : 'text-gray-700']">
+                      {{ selectedPlugin.name }}-{{ selectedBranch }}.zip
+                    </span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span :class="['text-xs', isDarkMode ? 'text-gray-500' : 'text-gray-400']">格式</span>
+                    <span :class="['text-sm', isDarkMode ? 'text-gray-300' : 'text-gray-700']">ZIP 压缩包</span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Download Button -->
               <button 
                 @click="downloadPlugin"
                 :disabled="!selectedBranch || !pluginRepoUrl"
                 :class="[
-                  'flex-1 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2',
+                  'w-full px-6 py-4 rounded-xl text-base font-semibold transition-all duration-200 flex items-center justify-center gap-3',
                   selectedBranch && pluginRepoUrl
-                    ? 'bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white hover:shadow-lg'
+                    ? 'bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]'
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:text-gray-600'
                 ]"
               >
-                <Icon icon="mdi:download" class="text-base sm:text-lg" />
-                下载插件
+                <Icon icon="mdi:download" class="text-xl" />
+                <span v-if="selectedBranch">下载 {{ selectedBranch }} 分支</span>
+                <span v-else>请先选择分支</span>
               </button>
-              <button 
-                @click="goToRepository(selectedPlugin)"
-                :disabled="!selectedPlugin.repositoryUrl || selectedPlugin.repositoryUrl.trim() === ''"
-                :class="[
-                  'flex-1 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2',
-                  selectedPlugin.repositoryUrl && selectedPlugin.repositoryUrl.trim() !== '' 
-                    ? isDarkMode
-                      ? 'bg-dark-border hover:bg-dark-muted text-gray-300 hover:text-white'
-                      : 'bg-light-muted hover:bg-gray-200 text-gray-700 hover:text-gray-900'
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:text-gray-600'
-                ]"
-              >
-                <Icon icon="mdi:github" class="text-base sm:text-lg" />
-                查看仓库
-              </button>
-              <button 
-                @click="closeModal"
-                :class="[
-                  'px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm font-medium transition-all duration-200',
-                  isDarkMode 
-                    ? 'bg-dark-border hover:bg-dark-muted text-gray-300' 
-                    : 'bg-light-muted hover:bg-gray-200 text-gray-700'
-                ]"
-              >
-                关闭
-              </button>
+              
+              <!-- Tips -->
+              <div :class="[
+                'rounded-xl p-4 border flex items-start gap-3',
+                isDarkMode ? 'bg-primary-900/10 border-primary-800/30' : 'bg-primary-50 border-primary-200'
+              ]">
+                <Icon icon="mdi:information-outline" :class="['text-xl flex-shrink-0 mt-0.5', isDarkMode ? 'text-primary-400' : 'text-primary-500']" />
+                <div>
+                  <p :class="['text-sm font-medium mb-1', isDarkMode ? 'text-primary-300' : 'text-primary-700']">关于分支选择</p>
+                  <p :class="['text-xs leading-relaxed', isDarkMode ? 'text-primary-400/80' : 'text-primary-600']">
+                    你可以在底部左下角的分支选择器中切换分支。README 预览和下载会同步使用所选分支。
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Footer -->
+            <div :class="[
+              'p-4 sm:p-6 border-t flex flex-col sm:flex-row items-stretch sm:items-center gap-3',
+              isDarkMode ? 'bg-dark-surface border-dark-border' : 'bg-light-surface border-light-border'
+            ]">
+              <!-- Branch Selector (Left) -->
+              <div class="flex items-center gap-2 flex-1 min-w-0">
+                <Icon icon="mdi:source-branch" :class="['text-lg flex-shrink-0', isDarkMode ? 'text-primary-400' : 'text-primary-500']" />
+                <div class="relative flex-1 min-w-0 max-w-[200px]">
+                  <select
+                    v-model="selectedBranch"
+                    :disabled="isLoadingBranches || branches.length === 0"
+                    :class="[
+                      'w-full pl-3 pr-8 py-2 rounded-lg border appearance-none transition-all cursor-pointer text-sm',
+                      isDarkMode 
+                        ? 'bg-dark-muted border-dark-border text-white focus:border-primary-500' 
+                        : 'bg-white border-light-border text-gray-900 focus:border-primary-500',
+                      (isLoadingBranches || branches.length === 0) ? 'opacity-50 cursor-not-allowed' : ''
+                    ]"
+                  >
+                    <option v-if="isLoadingBranches" value="" disabled>加载中...</option>
+                    <option v-else-if="errorBranches" value="" disabled>加载失败</option>
+                    <option v-else-if="branches.length === 0" value="" disabled>无分支</option>
+                    <option v-for="branch in branches" :key="branch.name" :value="branch.name">
+                      {{ branch.name }}
+                    </option>
+                  </select>
+                  <Icon icon="mdi:chevron-down" :class="[
+                    'absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-sm',
+                    isDarkMode ? 'text-gray-500' : 'text-gray-400'
+                  ]" />
+                </div>
+              </div>
+              
+              <!-- Action Buttons (Right) -->
+              <div class="flex items-center gap-2 sm:gap-3">
+                <button 
+                  @click="goToRepository(selectedPlugin)"
+                  :disabled="!selectedPlugin.repositoryUrl || selectedPlugin.repositoryUrl.trim() === ''"
+                  :class="[
+                    'px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-center gap-1.5',
+                    selectedPlugin.repositoryUrl && selectedPlugin.repositoryUrl.trim() !== '' 
+                      ? isDarkMode
+                        ? 'bg-dark-border hover:bg-dark-muted text-gray-300 hover:text-white'
+                        : 'bg-light-muted hover:bg-gray-200 text-gray-700 hover:text-gray-900'
+                      : 'bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:text-gray-600'
+                  ]"
+                >
+                  <Icon icon="mdi:github" class="text-base" />
+                  <span class="hidden sm:inline">仓库</span>
+                </button>
+                <button 
+                  @click="closeModal"
+                  :class="[
+                    'px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-sm font-medium transition-all duration-200',
+                    isDarkMode 
+                      ? 'bg-dark-border hover:bg-dark-muted text-gray-300' 
+                      : 'bg-light-muted hover:bg-gray-200 text-gray-700'
+                  ]"
+                >
+                  关闭
+                </button>
+              </div>
             </div>
           </div>
         </div>
