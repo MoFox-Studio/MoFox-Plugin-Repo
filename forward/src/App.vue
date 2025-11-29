@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, computed } from 'vue'
 import { usePlugins } from './composables/usePlugins'
 import { useTheme } from './composables/useTheme'
 import { useModal } from './composables/useModal'
@@ -55,15 +55,13 @@ onMounted(() => {
 
 <template>
   <div :class="[
-    'min-h-screen transition-colors duration-300',
-    isDarkMode 
-      ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' 
-      : 'bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100'
+    'min-h-screen transition-colors duration-300 bg-grid',
+    isDarkMode ? 'dark bg-dark-bg' : 'bg-white'
   ]">
     <TheHeader :isDarkMode="isDarkMode" :toggleTheme="toggleTheme" />
 
-    <main class="pt-20 pb-8">
-      <div class="container mx-auto px-4">
+    <main class="pt-24 pb-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SearchBar :isDarkMode="isDarkMode" v-model:searchQuery="searchQuery" />
         <FeaturedPlugins 
           :isDarkMode="isDarkMode" 
@@ -123,86 +121,75 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped>
-/* 毛玻璃效果 */
-.backdrop-blur-sm {
-  backdrop-filter: blur(4px);
-}
-
+<style>
 /* 弹窗背景动画 */
-.modal-backdrop-enter-active, .modal-backdrop-leave-active {
+.modal-backdrop-enter-active,
+.modal-backdrop-leave-active {
   transition: all 0.3s ease;
 }
 
-.modal-backdrop-enter-from, .modal-backdrop-leave-to {
+.modal-backdrop-enter-from,
+.modal-backdrop-leave-to {
   opacity: 0;
 }
 
 /* 弹窗内容动画 */
-.modal-content-enter-active, .modal-content-leave-active {
-  transition: all 0.3s ease;
+.modal-content-enter-active,
+.modal-content-leave-active {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.modal-content-enter-from, .modal-content-leave-to {
+.modal-content-enter-from {
   opacity: 0;
-  transform: scale(0.9);
+  transform: scale(0.95) translateY(10px);
+}
+
+.modal-content-leave-to {
+  opacity: 0;
+  transform: scale(0.95) translateY(10px);
 }
 
 /* 卡片扫描动画 */
 .plugin-card {
   opacity: 0;
-  transform: translateY(20px) scale(0.9);
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(20px);
 }
 
 .animate-card-sweep {
-  animation: cardSweepReveal 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation: cardSweepReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: var(--sweep-delay);
 }
 
 @keyframes cardSweepReveal {
   0% {
     opacity: 0;
-    transform: translateY(20px) scale(0.9);
-    filter: blur(3px);
-  }
-  50% {
-    opacity: 0.6;
-    filter: blur(1px);
+    transform: translateY(20px);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
+    transform: translateY(0);
   }
 }
 
 /* 列表扫描动画 */
 .plugin-list-item {
   opacity: 0;
-  transform: translateX(-50px) scale(0.95);
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(-20px);
 }
 
 .animate-list-sweep {
-  animation: listSweepReveal 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation: listSweepReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: var(--sweep-delay);
 }
 
 @keyframes listSweepReveal {
   0% {
     opacity: 0;
-    transform: translateX(-50px) scale(0.95);
-    filter: blur(2px);
-  }
-  60% {
-    opacity: 0.8;
-    filter: blur(0.5px);
+    transform: translateX(-20px);
   }
   100% {
     opacity: 1;
-    transform: translateX(0) scale(1);
-    filter: blur(0);
+    transform: translateX(0);
   }
 }
 
@@ -220,97 +207,38 @@ onMounted(() => {
   }
 }
 
-/* 文本截断 */
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* 自定义滚动条 */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-/* 按钮悬停效果 */
-.btn-gradient {
-  background: linear-gradient(135deg, #4d9fff 0%, #6366f1 100%);
-  transition: all 0.3s ease;
-}
-
-.btn-gradient:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(77, 159, 255, 0.3);
-}
-
-/* 卡片悬停效果 */
-.card-hover {
-  transition: all 0.3s ease;
-}
-
-.card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-}
-
-/* 渐变文本 */
-.gradient-text {
-  background: linear-gradient(135deg, #4d9fff 0%, #6366f1 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* 动画效果 */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fadeInUp {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-/* 背景动画 */
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
+/* 脉冲动画 */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
   }
   50% {
-    transform: translateY(-20px);
+    transform: scale(1.2);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0.8;
   }
 }
 
-.animate-float {
-  animation: float 6s ease-in-out infinite;
+.animate-pulse-ring {
+  animation: pulse-ring 2s ease-in-out infinite;
+}
+
+/* 渐变边框动画 */
+@keyframes gradient-border {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-border {
+  background-size: 200% 200%;
+  animation: gradient-border 3s ease infinite;
 }
 </style>

@@ -23,7 +23,6 @@ const errorReadme = ref(null)
 
 const pluginRepoUrl = computed(() => {
   if (!props.plugin || !props.plugin.id) return null
-  // 从 usePlugins composable 获取的全局插件列表中查找
   const foundPlugin = plugins.value.find(p => p.id === props.plugin.id)
   return foundPlugin ? foundPlugin.repositoryUrl : null
 })
@@ -94,7 +93,6 @@ async function fetchReadme() {
   } catch (err) {
     errorReadme.value = err.message
     readmeContent.value = err.message
-    alert(`获取 README 失败: ${err.message}`)
   } finally {
     isLoadingReadme.value = false
   }
@@ -111,7 +109,6 @@ watch(selectedBranch, (newBranch, oldBranch) => {
 watch(
   () => props.showModal,
   (newShowModal) => {
-    // 当模态框打开时，如果插件数据已存在，则获取分支
     if (newShowModal && props.plugin) {
       fetchBranches()
     }
@@ -121,7 +118,6 @@ watch(
 watch(
   () => props.plugin,
   (newPlugin) => {
-    // 当插件数据更新时，如果模态框已打开，则获取分支
     if (newPlugin && props.showModal) {
       fetchBranches()
     }
@@ -148,116 +144,155 @@ function downloadPlugin() {
 
 <template>
   <Transition name="modal-backdrop">
-    <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center">
-      <!-- 毛玻璃遮罩 -->
+    <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <!-- Backdrop -->
       <div
-        class="fixed inset-0 backdrop-blur-sm"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm"
         @click="closeModal"
       ></div>
 
-      <!-- 弹窗内容 -->
+      <!-- Modal Content -->
       <Transition name="modal-content" appear>
         <div v-if="showModal" :class="[
-          'relative rounded-3xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto transition-colors',
-          isDarkMode ? 'bg-gray-800' : 'bg-white'
+          'relative w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-2xl border shadow-2xl',
+          isDarkMode ? 'bg-dark-bg border-dark-border' : 'bg-white border-light-border'
         ]">
-          <div v-if="plugin" class="p-8">
-            <!-- 插件头部信息 -->
-            <div class="flex items-start gap-6 mb-6">
-              <div class="w-20 h-20 bg-gradient-to-br from-green-400 to-cyan-500 rounded-2xl flex items-center justify-center flex-shrink-0">
-                <Icon icon="mdi:download" class="text-3xl text-white" />
+          <!-- Close Button -->
+          <button 
+            @click="closeModal"
+            :class="[
+              'absolute top-4 right-4 z-10 w-10 h-10 rounded-xl flex items-center justify-center transition-colors',
+              isDarkMode 
+                ? 'bg-dark-surface hover:bg-dark-border text-gray-400 hover:text-white' 
+                : 'bg-light-surface hover:bg-light-muted text-gray-500 hover:text-gray-900'
+            ]"
+          >
+            <Icon icon="mdi:close" class="text-xl" />
+          </button>
+          
+          <div v-if="plugin" class="overflow-y-auto max-h-[90vh]">
+            <!-- Header -->
+            <div :class="[
+              'p-6 border-b',
+              isDarkMode ? 'bg-dark-surface border-dark-border' : 'bg-light-surface border-light-border'
+            ]">
+              <div class="flex items-start gap-5 pr-10">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-lg flex-shrink-0">
+                  <Icon icon="mdi:download" class="text-2xl text-white" />
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h2 :class="[
+                    'text-xl font-bold mb-1 truncate',
+                    isDarkMode ? 'text-white' : 'text-gray-900'
+                  ]">下载 {{ plugin.name }}</h2>
+                  <p :class="[
+                    'text-sm',
+                    isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                  ]">选择分支并下载插件</p>
+                </div>
               </div>
-              <div class="flex-1">
-                <h2 :class="[
-                  'text-3xl font-bold mb-2',
-                  isDarkMode ? 'text-white' : 'text-gray-800'
-                ]">{{ plugin.name }}</h2>
-                <p :class="[
-                  'text-lg',
-                  isDarkMode ? 'text-gray-300' : 'text-gray-600'
+            </div>
+
+            <!-- Body -->
+            <div class="p-6 space-y-6">
+              <!-- Branch Selection -->
+              <div>
+                <h3 :class="[
+                  'text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2',
+                  isDarkMode ? 'text-gray-400' : 'text-gray-500'
                 ]">
-                  下载插件
-                </p>
+                  <Icon icon="mdi:source-branch" />
+                  选择分支
+                </h3>
+                <div class="relative">
+                  <select
+                    v-model="selectedBranch"
+                    :disabled="isLoadingBranches || branches.length === 0"
+                    :class="[
+                      'w-full px-4 py-3 rounded-xl border appearance-none transition-all cursor-pointer',
+                      isDarkMode 
+                        ? 'bg-dark-surface border-dark-border text-white focus:border-primary-500' 
+                        : 'bg-light-surface border-light-border text-gray-900 focus:border-primary-500',
+                      (isLoadingBranches || branches.length === 0) ? 'opacity-50 cursor-not-allowed' : ''
+                    ]"
+                  >
+                    <option v-if="isLoadingBranches" value="" disabled>正在加载分支...</option>
+                    <option v-else-if="errorBranches" value="" disabled>{{ errorBranches }}</option>
+                    <option v-else-if="branches.length === 0" value="" disabled>没有可用的分支</option>
+                    <option v-for="branch in branches" :key="branch.name" :value="branch.name">
+                      {{ branch.name }}
+                    </option>
+                  </select>
+                  <Icon icon="mdi:chevron-down" :class="[
+                    'absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none',
+                    isDarkMode ? 'text-gray-500' : 'text-gray-400'
+                  ]" />
+                </div>
+              </div>
+
+              <!-- README Preview -->
+              <div>
+                <h3 :class="[
+                  'text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2',
+                  isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                ]">
+                  <Icon icon="mdi:book-open-variant" />
+                  README.md
+                </h3>
+                <div :class="[
+                  'prose prose-sm max-w-none p-4 rounded-xl border h-64 overflow-y-auto relative',
+                  isDarkMode 
+                    ? 'prose-invert bg-dark-surface border-dark-border' 
+                    : 'bg-light-surface border-light-border'
+                ]">
+                  <div v-if="isLoadingReadme" class="absolute inset-0 flex items-center justify-center">
+                    <div class="flex items-center gap-3">
+                      <div class="w-5 h-5 border-2 border-primary-500/30 border-t-primary-500 rounded-full animate-spin"></div>
+                      <span :class="isDarkMode ? 'text-gray-400' : 'text-gray-500'">正在加载...</span>
+                    </div>
+                  </div>
+                  <div v-else-if="errorReadme" :class="[
+                    'text-sm',
+                    isDarkMode ? 'text-red-400' : 'text-red-500'
+                  ]">
+                    <p>{{ errorReadme }}</p>
+                  </div>
+                  <div v-else-if="readmeContent" v-html="readmeContent"></div>
+                  <div v-else :class="[
+                    'text-sm',
+                    isDarkMode ? 'text-gray-500' : 'text-gray-400'
+                  ]">
+                    <p>没有可预览的 README 内容。</p>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <!-- 分支选择 -->
-            <div class="mb-6">
-              <h3 :class="[
-                'text-xl font-semibold mb-3 flex items-center gap-2',
-                isDarkMode ? 'text-white' : 'text-gray-800'
-              ]">
-                <Icon icon="mdi:source-branch" />
-                选择分支
-              </h3>
-              <div class="relative">
-                <select
-                  v-model="selectedBranch"
-                  :disabled="isLoadingBranches || branches.length === 0"
-                  :class="[
-                    'w-full p-3 rounded-lg border transition-colors appearance-none',
-                    isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-gray-50 border-gray-300 text-gray-800',
-                    (isLoadingBranches || branches.length === 0) ? 'cursor-not-allowed opacity-50' : ''
-                  ]"
-                >
-                  <option v-if="isLoadingBranches" value="" disabled>正在加载分支...</option>
-                  <option v-else-if="errorBranches" value="" disabled>{{ errorBranches }}</option>
-                  <option v-else-if="branches.length === 0" value="" disabled>没有可用的分支</option>
-                  <option v-for="branch in branches" :key="branch.name" :value="branch.name">
-                    {{ branch.name }}
-                  </option>
-                </select>
-                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <Icon icon="mdi:chevron-down" :class="isDarkMode ? 'text-gray-300' : 'text-gray-600'" />
-                </div>
-              </div>
-            </div>
-
-            <!-- README预览 -->
-            <div class="mb-8">
-              <h3 :class="[
-                'text-xl font-semibold mb-3 flex items-center gap-2',
-                isDarkMode ? 'text-white' : 'text-gray-800'
-              ]">
-                <Icon icon="mdi:book-open-variant" />
-                README.md
-              </h3>
-              <div :class="[
-                'prose prose-sm max-w-none p-4 rounded-lg border h-64 overflow-y-auto relative',
-                isDarkMode ? 'prose-invert bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'
-              ]">
-                <div v-if="isLoadingReadme" class="absolute inset-0 flex items-center justify-center bg-opacity-50" :class="isDarkMode ? 'bg-gray-700' : 'bg-gray-50'">
-                  <p>正在加载 README...</p>
-                </div>
-                <div v-else-if="errorReadme" class="text-red-500">
-                  <p>{{ errorReadme }}</p>
-                </div>
-                <div v-else-if="readmeContent" v-html="readmeContent"></div>
-                <div v-else>
-                  <p>没有可预览的 README 内容。</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- 操作按钮 -->
-            <div class="flex gap-4">
+            <!-- Footer -->
+            <div :class="[
+              'p-6 border-t flex gap-3',
+              isDarkMode ? 'bg-dark-surface border-dark-border' : 'bg-light-surface border-light-border'
+            ]">
               <button
                 @click="downloadPlugin"
                 :disabled="!selectedBranch || !pluginRepoUrl"
                 :class="[
-                  'flex-1 px-6 py-3 rounded-xl font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200',
-                  'bg-gradient-to-r from-blue-500 to-indigo-600 text-white',
-                  !selectedBranch || !pluginRepoUrl ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                  'flex-1 px-6 py-3 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-2',
+                  selectedBranch && pluginRepoUrl
+                    ? 'bg-primary-500 hover:bg-primary-600 text-white hover:shadow-glow'
+                    : 'bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:text-gray-600'
                 ]"
               >
-                <Icon icon="mdi:download" class="inline mr-2" />
-                下载
+                <Icon icon="mdi:download" />
+                下载插件
               </button>
               <button
                 @click="closeModal"
                 :class="[
-                  'flex-1 px-6 py-3 rounded-xl font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200',
-                  isDarkMode ? 'bg-gray-600 hover:bg-gray-500 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
+                  'px-6 py-3 rounded-xl font-medium transition-all duration-200',
+                  isDarkMode 
+                    ? 'bg-dark-border hover:bg-dark-muted text-gray-300' 
+                    : 'bg-light-muted hover:bg-gray-200 text-gray-700'
                 ]"
               >
                 关闭
@@ -269,26 +304,3 @@ function downloadPlugin() {
     </div>
   </Transition>
 </template>
-
-<style scoped>
-.modal-backdrop-enter-active,
-.modal-backdrop-leave-active {
-  transition: opacity 0.3s ease;
-}
-.modal-backdrop-enter-from,
-.modal-backdrop-leave-to {
-  opacity: 0;
-}
-
-.modal-content-enter-active {
-  transition: all 0.3s ease-out;
-}
-.modal-content-leave-active {
-  transition: all 0.2s ease-in;
-}
-.modal-content-enter-from,
-.modal-content-leave-to {
-  transform: translateY(-50px);
-  opacity: 0;
-}
-</style>
