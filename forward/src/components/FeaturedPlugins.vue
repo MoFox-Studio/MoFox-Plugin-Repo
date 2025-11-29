@@ -4,9 +4,7 @@ import { Icon } from '@iconify/vue'
 defineProps({
   isDarkMode: Boolean,
   featuredPlugins: Array,
-  showPluginDetails: Function,
-  openDownloadModal: Function,
-  goToRepository: Function
+  showPluginDetails: Function
 })
 </script>
 
@@ -94,38 +92,15 @@ defineProps({
             </span>
           </div>
           
-          <!-- Actions -->
-          <div class="flex items-center gap-2 sm:gap-3" @click.stop>
-            <button
-              @click="openDownloadModal(plugin)"
-              :disabled="!plugin.repositoryUrl || plugin.repositoryUrl.trim() === ''"
-              :class="[
-                'flex-1 px-3 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all duration-200',
-                'flex items-center justify-center gap-1.5 sm:gap-2',
-                plugin.repositoryUrl && plugin.repositoryUrl.trim() !== ''
-                  ? 'bg-primary-500 hover:bg-primary-600 text-white hover:shadow-glow'
-                  : 'bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:text-gray-600'
-              ]"
-            >
-              <Icon icon="mdi:download" class="text-sm sm:text-base" />
-              <span class="hidden xs:inline">下载</span><span class="hidden sm:inline">插件</span>
-            </button>
-            <button
-              @click="goToRepository(plugin)"
-              :disabled="!plugin.repositoryUrl || plugin.repositoryUrl.trim() === ''"
-              :class="[
-                'px-3 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all duration-200',
-                'flex items-center justify-center gap-1.5 sm:gap-2',
-                plugin.repositoryUrl && plugin.repositoryUrl.trim() !== ''
-                  ? isDarkMode 
-                    ? 'bg-dark-border hover:bg-dark-muted text-gray-300 hover:text-white'
-                    : 'bg-light-muted hover:bg-gray-200 text-gray-600 hover:text-gray-900'
-                  : 'bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:text-gray-600'
-              ]"
-            >
-              <Icon icon="mdi:github" class="text-sm sm:text-base" />
-              <span class="hidden sm:inline">仓库</span>
-            </button>
+          <!-- View Details Hint -->
+          <div class="flex items-center justify-center">
+            <span :class="[
+              'text-xs sm:text-sm font-medium flex items-center gap-2 transition-colors group-hover:text-primary-500',
+              isDarkMode ? 'text-gray-500' : 'text-gray-400'
+            ]">
+              <Icon icon="mdi:information-outline" class="text-base" />
+              点击查看详情
+            </span>
           </div>
         </div>
       </div>

@@ -7,9 +7,7 @@ const props = defineProps({
   plugin: Object,
   index: Number,
   showPlugins: Boolean,
-  showPluginDetails: Function,
-  openDownloadModal: Function,
-  goToRepository: Function
+  showPluginDetails: Function
 })
 
 const formattedDate = computed(() => {
@@ -110,38 +108,15 @@ const formattedDate = computed(() => {
               </span>
             </div>
             
-            <!-- Actions (Desktop) -->
-            <div class="hidden md:flex items-center gap-2 flex-shrink-0" @click.stop>
-              <button
-                @click="openDownloadModal(plugin)"
-                :disabled="!plugin.repositoryUrl || plugin.repositoryUrl.trim() === ''"
-                :class="[
-                  'px-3 md:px-4 py-1.5 md:py-2 rounded-lg md:rounded-xl text-xs md:text-sm font-medium transition-all duration-200',
-                  'flex items-center gap-1 md:gap-1.5',
-                  plugin.repositoryUrl && plugin.repositoryUrl.trim() !== ''
-                    ? 'bg-primary-500 hover:bg-primary-600 text-white hover:shadow-glow'
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:text-gray-600'
-                ]"
-              >
-                <Icon icon="mdi:download" class="text-sm md:text-base" />
-                <span>下载</span>
-              </button>
-              <button
-                @click="goToRepository(plugin)"
-                :disabled="!plugin.repositoryUrl || plugin.repositoryUrl.trim() === ''"
-                :class="[
-                  'px-3 md:px-4 py-1.5 md:py-2 rounded-lg md:rounded-xl text-xs md:text-sm font-medium transition-all duration-200',
-                  'flex items-center gap-1 md:gap-1.5',
-                  plugin.repositoryUrl && plugin.repositoryUrl.trim() !== ''
-                    ? isDarkMode 
-                      ? 'bg-dark-border hover:bg-dark-muted text-gray-300 hover:text-white'
-                      : 'bg-light-muted hover:bg-gray-200 text-gray-600 hover:text-gray-900'
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:text-gray-600'
-                ]"
-              >
-                <Icon icon="mdi:github" class="text-sm md:text-base" />
-                <span>仓库</span>
-              </button>
+            <!-- View Details Hint (Desktop) -->
+            <div class="hidden md:flex items-center gap-2 flex-shrink-0">
+              <span :class="[
+                'text-xs font-medium flex items-center gap-1.5 transition-colors group-hover:text-primary-500',
+                isDarkMode ? 'text-gray-500' : 'text-gray-400'
+              ]">
+                <Icon icon="mdi:information-outline" class="text-sm" />
+                查看详情
+              </span>
             </div>
           </div>
         </div>
@@ -165,37 +140,15 @@ const formattedDate = computed(() => {
             </span>
           </div>
           
-          <!-- Actions -->
-          <div class="flex items-center gap-2 pt-1" @click.stop>
-            <button
-              @click="openDownloadModal(plugin)"
-              :disabled="!plugin.repositoryUrl || plugin.repositoryUrl.trim() === ''"
-              :class="[
-                'flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200',
-                'flex items-center justify-center gap-1.5',
-                plugin.repositoryUrl && plugin.repositoryUrl.trim() !== ''
-                  ? 'bg-primary-500 hover:bg-primary-600 text-white'
-                  : 'bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:text-gray-600'
-              ]"
-            >
-              <Icon icon="mdi:download" class="text-sm" />
-              下载
-            </button>
-            <button
-              @click="goToRepository(plugin)"
-              :disabled="!plugin.repositoryUrl || plugin.repositoryUrl.trim() === ''"
-              :class="[
-                'px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200',
-                'flex items-center justify-center gap-1.5',
-                plugin.repositoryUrl && plugin.repositoryUrl.trim() !== ''
-                  ? isDarkMode 
-                    ? 'bg-dark-border hover:bg-dark-muted text-gray-300'
-                    : 'bg-light-muted hover:bg-gray-200 text-gray-600'
-                  : 'bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:text-gray-600'
-              ]"
-            >
-              <Icon icon="mdi:github" class="text-sm" />
-            </button>
+          <!-- View Details Hint -->
+          <div class="flex items-center justify-center pt-1">
+            <span :class="[
+              'text-xs font-medium flex items-center gap-1.5 transition-colors group-hover:text-primary-500',
+              isDarkMode ? 'text-gray-500' : 'text-gray-400'
+            ]">
+              <Icon icon="mdi:information-outline" class="text-sm" />
+              点击查看详情
+            </span>
           </div>
         </div>
       </div>

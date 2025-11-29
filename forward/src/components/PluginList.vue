@@ -15,8 +15,6 @@ const props = defineProps({
   showPlugins: Boolean,
   fetchPlugins: Function,
   showPluginDetails: Function,
-  openDownloadModal: Function,
-  goToRepository: Function,
   sortOrder: String
 })
 
@@ -197,8 +195,6 @@ const switchViewMode = async (mode) => {
           :index="index"
           :showPlugins="showPlugins"
           :showPluginDetails="showPluginDetails"
-          :openDownloadModal="openDownloadModal"
-          :goToRepository="goToRepository"
         />
       </div>
     </div>
@@ -214,8 +210,6 @@ const switchViewMode = async (mode) => {
           :index="index"
           :showPlugins="showPlugins"
           :showPluginDetails="showPluginDetails"
-          :openDownloadModal="openDownloadModal"
-          :goToRepository="goToRepository"
         />
       </div>
     </div>

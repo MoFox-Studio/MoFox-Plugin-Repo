@@ -11,7 +11,6 @@ import FeaturedPlugins from './components/FeaturedPlugins.vue'
 import PluginList from './components/PluginList.vue'
 import Pagination from './components/Pagination.vue'
 import PluginDetailsModal from './components/PluginDetailsModal.vue'
-import DownloadModal from './components/DownloadModal.vue'
 import NoticeModal from './components/NoticeModal.vue'
 
 const {
@@ -39,10 +38,6 @@ const {
   selectedPlugin,
   showPluginDetails,
   closeModal,
-  showDownloadModal,
-  selectedDownloadPlugin,
-  openDownloadModal,
-  closeDownloadModal,
   showNotice,
   canCloseNotice,
   dontShowNoticeAgain,
@@ -68,8 +63,6 @@ onMounted(() => {
           :isDarkMode="isDarkMode" 
           :featuredPlugins="featuredPlugins"
           :showPluginDetails="showPluginDetails"
-          :openDownloadModal="openDownloadModal"
-          :goToRepository="goToRepository"
         />
        <PluginList
          :isDarkMode="isDarkMode"
@@ -82,8 +75,6 @@ onMounted(() => {
           :showPlugins="showPlugins"
           :fetchPlugins="fetchPluginsData"
           :showPluginDetails="showPluginDetails"
-          :openDownloadModal="openDownloadModal"
-          :goToRepository="goToRepository"
           v-model:sortOrder="sortOrder"
         />
        <Pagination
@@ -103,13 +94,6 @@ onMounted(() => {
       :selectedPlugin="selectedPlugin"
       :closeModal="closeModal"
       :goToRepository="goToRepository"
-    />
-
-    <DownloadModal
-      :isDarkMode="isDarkMode"
-      :showModal="showDownloadModal"
-      :plugin="selectedDownloadPlugin"
-      :closeModal="closeDownloadModal"
     />
 
     <NoticeModal
