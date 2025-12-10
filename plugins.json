@@ -22,5 +22,9 @@
   {
     "id": "minecraft1024a.Bot_Status_Plugin",
     "repositoryUrl": "https://github.com/minecraft1024a/Bot_Status_Plugin"
+  },
+  {
+    "id": "ikun-11451.battery_plugin",
+    "repositoryUrl": "https://github.com/ikun-11451/battery_plugin"
   }
 ]
