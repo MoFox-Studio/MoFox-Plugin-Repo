@@ -16,6 +16,7 @@ export function useModal() {
 
   // 显示插件详情
   const showPluginDetails = (plugin) => {
+    if (!plugin) return
     selectedPlugin.value = plugin
     showModal.value = true
     // 锁定背景滚动
@@ -25,16 +26,30 @@ export function useModal() {
   // 关闭插件详情弹窗
   const closeModal = () => {
     showModal.value = false
-    selectedPlugin.value = null
+    // 延迟清除 selectedPlugin，等待动画完成
+    setTimeout(() => {
+      selectedPlugin.value = null
+    }, 300)
     // 恢复背景滚动
     document.body.style.overflow = ''
   }
 
   // 打开下载弹窗
   const openDownloadModal = (plugin) => {
+    if (!plugin) return
     selectedDownloadPlugin.value = plugin
     showDownloadModal.value = true
     document.body.style.overflow = 'hidden'
+  }
+
+  // 关闭下载弹窗
+  const closeDownloadModal = () => {
+    showDownloadModal.value = false
+    // 延迟清除，等待动画完成
+    setTimeout(() => {
+      selectedDownloadPlugin.value = null
+    }, 300)
+    document.body.style.overflow = ''
   }
 
   // 关闭注意事项弹窗
@@ -82,8 +97,7 @@ export function useModal() {
         if (showModal.value) {
           closeModal()
         } else if (showDownloadModal.value) {
-          showDownloadModal.value = false
-          document.body.style.overflow = ''
+          closeDownloadModal()
         } else if (showNotice.value && canCloseNotice.value) {
           closeNotice()
         }
@@ -99,6 +113,7 @@ export function useModal() {
     showDownloadModal,
     selectedDownloadPlugin,
     openDownloadModal,
+    closeDownloadModal,
     showNotice,
     canCloseNotice,
     dontShowNoticeAgain,

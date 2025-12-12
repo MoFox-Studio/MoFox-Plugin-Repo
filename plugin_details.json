@@ -10,6 +10,106 @@
       "license": "MIT",
       "repository_url": "https://github.com/minecraft1024a/MaiBot-Send-Image-Plugin-SF"
     },
-    "createdAt": "2025-10-25T00:38:05.333Z"
+    "createdAt": "2025-10-31T12:02:20.540Z"
+  },
+  {
+    "id": "dice-and-tarot",
+    "manifest": {
+      "name": "骰子与塔罗牌插件 (Dice and Tarot)",
+      "description": "提供 DND 骰子投掷和赛博塔罗牌占卜功能。支持标准DND骰子表达式（如2d6+3），包含完整78张塔罗牌，随机正位/逆位占卜。",
+      "usage": "",
+      "version": "1.0.0",
+      "author": "MoFox Community",
+      "license": "MIT",
+      "repository_url": "https://github.com/SolenmeChiara/mofox-dice-tarot-plugin",
+      "keywords": [
+        "dice",
+        "tarot",
+        "dnd",
+        "骰子",
+        "塔罗牌",
+        "娱乐",
+        "占卜",
+        "游戏"
+      ],
+      "categories": [
+        "Entertainment",
+        "Games",
+        "Fun"
+      ],
+      "extra": "{\n        \"is_built_in\": false,  # 第三方插件\n        \"plugin_type\": \"entertainment\",\n        \"min_bot_version\": \"1.0.0\",\n        \"python_version\": \">=3.11\",\n    }"
+    },
+    "createdAt": "2025-10-31T12:24:05.706Z"
+  },
+  {
+    "id": "bingyv92.Muteplgin",
+    "manifest": {
+      "name": "群聊禁言管理插件 Mute Plugin",
+      "description": "群聊禁言管理插件",
+      "usage": "在群聊中提供智能禁言功能",
+      "version": "4.2.0",
+      "author": "SengokuCola",
+      "license": "MIT",
+      "repository_url": "https://github.com/bingyv92/Muteplgin"
+    },
+    "createdAt": "2025-10-31T12:24:05.810Z"
+  },
+  {
+    "id": "bingyv92.mofox_period_plugin",
+    "manifest": {
+      "name": "月经周期状态插件",
+      "description": "模拟女性月经周期对机器人状态的影响，让机器人具有生物节律",
+      "usage": "根据月经周期调整机器人的生理和心理状态，影响回复风格",
+      "version": "1.0.0",
+      "author": "bingyv92",
+      "license": "MIT",
+      "repository_url": "https://github.com/bingyv92/mofox_period_plugin"
+    },
+    "createdAt": "2025-10-31T13:20:25.415Z"
+  },
+  {
+    "id": "minecraft1024a.Bot_Status_Plugin",
+    "manifest": {
+      "name": "BotStatus",
+      "description": "一个用于生成机器人和系统状态图的插件。",
+      "usage": "/status",
+      "version": "1.0.0",
+      "author": "YiShan",
+      "license": "GPL-v3.0-or-later",
+      "repository_url": "https://github.com/minecraft1024a/Bot_Status_Plugin/",
+      "keywords": [
+        "status",
+        "statistics",
+        "management"
+      ],
+      "extra": "{\n        \"plugin_type\": \"info\",\n    }",
+      "python_dependencies": [
+        "psutil",
+        "Pillow"
+      ]
+    },
+    "createdAt": "2025-11-12T09:09:57.944Z"
+  },
+  {
+    "id": "ikun-11451.battery_plugin",
+    "manifest": {
+      "name": "Battery Plugin",
+      "description": "手机电量模拟插件，回复消耗电量，特定地点自动充电。",
+      "usage": "插件加载后自动运行，使用 /battery 查看状态",
+      "version": "1.0.0",
+      "author": "ikun两年半 <https://github.com/ikun-11451>",
+      "license": "GPL-3.0",
+      "keywords": [
+        "battery",
+        "simulation",
+        "roleplay"
+      ],
+      "categories": [
+        "娱乐",
+        "角色扮演"
+      ],
+      "extra": "{\n        \"is_built_in\": false,\n        \"plugin_type\": \"user\",\n    }"
+    },
+    "createdAt": "2025-12-10T13:43:38.725Z"
   }
 ]

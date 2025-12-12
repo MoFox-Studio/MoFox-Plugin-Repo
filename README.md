@@ -24,7 +24,7 @@
 
 我们非常欢迎您为 MoFox-Bot 生态贡献插件！提交您的插件非常简单，只需向本仓库发起一个 Pull Request (PR) 即可。
 
-请详细阅读我们的 **[贡献指南 (CONTRIBUTING.md)](./CONTRIBUTING.md)**，其中包含了所有您需要了解的步骤和规范。
+请详细阅读我们的 **[贡献指南](https://docs.mofox-sama.com/docs/development/plugins/how-to-contribute-plugins.html)**，其中包含了所有您需要了解的步骤和规范。
 
 ## ⚖️ 许可证
 

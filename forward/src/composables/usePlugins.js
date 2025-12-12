@@ -21,7 +21,7 @@ const fetchPlugins = async () => {
   error.value = null
   try {
     loadingStatus.value = '正在从 GitHub API 获取插件列表...'
-    const response = await fetch('https://api.github.com/repos/minecraft1024a/MoFox-Plugin-Repo/contents/plugin_details.json')
+    const response = await fetch('https://api.github.com/repos/MoFox-Studio/MoFox-Plugin-Repo/contents/plugin_details.json')
     if (!response.ok) {
       throw new Error(`HTTP Error: ${response.status} - 获取插件数据失败`)
     }
@@ -129,31 +129,31 @@ export function usePlugins() {
 
   // 推荐插件 - 这是计算属性，依赖全局的 plugins
   const featuredPlugins = computed(() => {
-    // 确保在操作前复制一份插件数组，避免修改原始数据
     const allPlugins = [...plugins.value]
 
-    // 如果插件总数不足4个，直接返回所有插件
-    if (allPlugins.length <= 4) {
+    // 如果插件总数少于2个，全部显示
+    if (allPlugins.length < 2) {
       return allPlugins
     }
 
-    // 按 createdAt 降序排序，获取最新的插件
+    // 按 createdAt 降序排序
     allPlugins.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 
-    // 获取最新的两个插件
+    // 如果插件总数在2到5个之间，显示最新的2个
+    if (allPlugins.length <= 5) {
+      return allPlugins.slice(0, 2)
+    }
+
+    // 如果插件总数大于等于6个，显示最新的2个 + 随机2个
     const newestPlugins = allPlugins.slice(0, 2)
-
-    // 获取剩余的插件用于随机选择
     const remainingPlugins = allPlugins.slice(2)
-
-    // 从剩余插件中随机选择两个
+    
     const randomPlugins = []
     while (randomPlugins.length < 2 && remainingPlugins.length > 0) {
       const randomIndex = Math.floor(Math.random() * remainingPlugins.length)
       randomPlugins.push(remainingPlugins.splice(randomIndex, 1)[0])
     }
 
-    // 合并并返回最终的插件列表
     return [...newestPlugins, ...randomPlugins]
   })
 
