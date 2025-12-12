@@ -26,5 +26,9 @@
   {
     "id": "ikun-11451.battery_plugin",
     "repositoryUrl": "https://github.com/ikun-11451/battery_plugin"
-  }
+  },
+    {
+        "id": "bingyv92.small_diseaes",
+        "repositoryUrl": "https://github.com/bingyv92/small_diseaes"
+    }
 ]
