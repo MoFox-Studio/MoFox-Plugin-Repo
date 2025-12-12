@@ -111,5 +111,29 @@
       "extra": "{\n        \"is_built_in\": false,\n        \"plugin_type\": \"user\",\n    }"
     },
     "createdAt": "2025-12-10T13:43:38.725Z"
+  },
+  {
+    "id": "bingyv92.small_diseaes",
+    "manifest": {
+      "name": "生小病插件",
+      "description": "一个模拟麦麦生病状态的插件，通过Prompt组件影响AI回复风格",
+      "usage": "",
+      "author": "bingyv92",
+      "version": "1.0.0",
+      "license": "MIT",
+      "keywords": [
+        "生病",
+        "健康",
+        "状态",
+        "Prompt",
+        "语气"
+      ],
+      "categories": [
+        "娱乐",
+        "功能"
+      ],
+      "repository_url": "https://github.com/bingyv92/small_diseaes"
+    },
+    "createdAt": "2025-12-12T11:58:32.123Z"
   }
 ]
