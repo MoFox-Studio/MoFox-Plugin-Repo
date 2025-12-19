@@ -56,7 +56,8 @@ defineProps({
             </li>
             <li>
               <a 
-                href="#" 
+                href="https://docs.mofox-sama.com/docs/development/plugins/how-to-contribute-plugins.html" 
+                target="_blank"
                 :class="[
                   'text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 transition-colors',
                   isDarkMode 
@@ -70,7 +71,8 @@ defineProps({
             </li>
             <li>
               <a 
-                href="#" 
+                href="https://docs.mofox-sama.com/" 
+                target="_blank"
                 :class="[
                   'text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 transition-colors',
                   isDarkMode 
