@@ -25,7 +25,7 @@ const formattedDate = computed(() => {
 <template>
   <div
     :class="[
-      'plugin-card group rounded-xl sm:rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden',
+      'plugin-card group rounded-xl sm:rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full',
       isDarkMode
         ? 'bg-dark-surface border-dark-border hover:border-primary-800'
         : 'bg-white border-light-border hover:border-primary-200',
@@ -38,7 +38,7 @@ const formattedDate = computed(() => {
     @click="showPluginDetails(plugin)"
   >
     <!-- Card Content -->
-    <div class="p-4 sm:p-6">
+    <div class="p-4 sm:p-6 flex-1">
       <!-- Header -->
       <div class="flex items-start gap-3 sm:gap-4 mb-3 sm:mb-4">
         <div class="relative flex-shrink-0">
