@@ -89,5 +89,51 @@
       ]
     },
     "createdAt": "2025-11-12T09:09:57.944Z"
+  },
+  {
+    "id": "ikun-11451.battery_plugin",
+    "manifest": {
+      "name": "Battery Plugin",
+      "description": "手机电量模拟插件，回复消耗电量，特定地点自动充电。",
+      "usage": "插件加载后自动运行，使用 /battery 查看状态",
+      "version": "1.0.0",
+      "author": "ikun两年半 <https://github.com/ikun-11451>",
+      "license": "GPL-3.0",
+      "keywords": [
+        "battery",
+        "simulation",
+        "roleplay"
+      ],
+      "categories": [
+        "娱乐",
+        "角色扮演"
+      ],
+      "extra": "{\n        \"is_built_in\": false,\n        \"plugin_type\": \"user\",\n    }"
+    },
+    "createdAt": "2025-12-10T13:43:38.725Z"
+  },
+  {
+    "id": "bingyv92.small_diseaes",
+    "manifest": {
+      "name": "生小病插件",
+      "description": "一个模拟麦麦生病状态的插件，通过Prompt组件影响AI回复风格",
+      "usage": "",
+      "author": "bingyv92",
+      "version": "1.0.0",
+      "license": "MIT",
+      "keywords": [
+        "生病",
+        "健康",
+        "状态",
+        "Prompt",
+        "语气"
+      ],
+      "categories": [
+        "娱乐",
+        "功能"
+      ],
+      "repository_url": "https://github.com/bingyv92/small_diseaes"
+    },
+    "createdAt": "2025-12-12T11:58:32.123Z"
   }
 ]

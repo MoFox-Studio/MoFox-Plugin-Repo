@@ -22,5 +22,17 @@
   {
     "id": "minecraft1024a.Bot_Status_Plugin",
     "repositoryUrl": "https://github.com/minecraft1024a/Bot_Status_Plugin"
+  },
+  {
+    "id": "ikun-11451.battery_plugin",
+    "repositoryUrl": "https://github.com/ikun-11451/battery_plugin"
+  },
+  {
+      "id": "bingyv92.small_diseaes",
+      "repositoryUrl": "https://github.com/bingyv92/small_diseaes"
+  },
+  {
+    "id": "MirNeko.Auto_accept_requests_plugin",
+    "repositoryUrl": "https://github.com/MirNeko/Auto_accept_requests_plugin.git"
   }
 ]

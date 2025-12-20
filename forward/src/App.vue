@@ -60,6 +60,7 @@ onMounted(() => {
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SearchBar :isDarkMode="isDarkMode" v-model:searchQuery="searchQuery" />
         <FeaturedPlugins 
+          v-if="!searchQuery"
           :isDarkMode="isDarkMode" 
           :featuredPlugins="featuredPlugins"
           :showPluginDetails="showPluginDetails"
