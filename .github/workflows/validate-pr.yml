@@ -3,8 +3,9 @@ name: Validate Plugin Submission
 
 # 触发工作流程的事件
 on:
-  # 当有 pull request 事件时触发
-  pull_request:
+  # 使用 pull_request_target 以获得写入评论的权限
+  # 注意：此事件在主仓库上下文中运行，具有写入权限
+  pull_request_target:
     # 仅针对目标是 main 分支的 pull request
     branches:
       - main
@@ -39,6 +40,8 @@ jobs:
       - name: Checkout PR branch
         uses: actions/checkout@v4
         with:
+          # 检出 PR 的 head ref（来自 fork 的分支）
+          ref: ${{ github.event.pull_request.head.sha }}
           # 将代码检出到 'pr' 目录下
           path: pr
 
@@ -361,7 +364,7 @@ jobs:
             
             # 运行 MPDT check
             echo "运行 MPDT 检查..."
-            if mpdt check "$PLUGIN_DIR" --report-format markdown --output-path "${PLUGIN_DIR}-report.md" 2>&1 | tee mpdt-output.txt; then
+            if mpdt check "$PLUGIN_DIR" --report markdown --output "${PLUGIN_DIR}-report.md" 2>&1 | tee mpdt-output.txt; then
               echo "## ✅ $REPO_NAME" >> mpdt-report.md
               echo "" >> mpdt-report.md
               echo "**MPDT 检查通过**" >> mpdt-report.md
