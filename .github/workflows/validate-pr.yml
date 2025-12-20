@@ -391,6 +391,10 @@ jobs:
               
               # 如果生成了详细报告，追加它
               if [ -f "${PLUGIN_DIR}-report.md" ]; then
+                echo "[DEBUG] 找到报告文件: ${PLUGIN_DIR}-report.md"
+                echo "[DEBUG] 报告文件内容:"
+                cat "${PLUGIN_DIR}-report.md"
+                echo "[DEBUG] 追加到总报告..."
                 cat "${PLUGIN_DIR}-report.md" >> mpdt-report.md
               fi
             else
@@ -401,8 +405,15 @@ jobs:
               
               # 追加详细报告
               if [ -f "${PLUGIN_DIR}-report.md" ]; then
+                echo "[DEBUG] 找到报告文件: ${PLUGIN_DIR}-report.md"
+                echo "[DEBUG] 报告文件内容:"
+                cat "${PLUGIN_DIR}-report.md"
+                echo "[DEBUG] 追加到总报告..."
                 cat "${PLUGIN_DIR}-report.md" >> mpdt-report.md
               else
+                echo "[DEBUG] 未找到报告文件，使用标准输出"
+                echo "[DEBUG] mpdt-output.txt 内容:"
+                cat mpdt-output.txt
                 echo '```' >> mpdt-report.md
                 cat mpdt-output.txt >> mpdt-report.md
                 echo '```' >> mpdt-report.md
@@ -421,7 +432,10 @@ jobs:
           
           # 显示报告内容
           echo "=== MPDT 检查报告 ==="
+          echo "[DEBUG] mpdt-report.md 文件大小: $(wc -c < mpdt-report.md) 字节"
+          echo "[DEBUG] mpdt-report.md 完整内容:"
           cat mpdt-report.md
+          echo "[DEBUG] 报告内容结束"
           
           if [ $MPDT_ERRORS -gt 0 ]; then
             echo "⚠️ MPDT 检查发现 $MPDT_ERRORS 个问题"
@@ -512,10 +526,27 @@ jobs:
             try {
               const mpdtReport = fs.readFileSync('mpdt-report.md', 'utf8');
               
+              console.log('[DEBUG] MPDT 报告文件大小:', mpdtReport.length, '字符');
+              console.log('[DEBUG] MPDT 报告内容:');
+              console.log('========================================');
+              console.log(mpdtReport);
+              console.log('========================================');
+              
               // 提取错误和警告信息
               const errorMatches = [...mpdtReport.matchAll(/❌\s*ERROR:\s*(.+?)(?=\n|$)/g)];
               const warningMatches = [...mpdtReport.matchAll(/⚠️\s*(?:WARNING|WARN):\s*(.+?)(?=\n|$)/g)];
               const suggestionMatches = [...mpdtReport.matchAll(/建议:\s*(.+?)(?=\n|$)/g)];
+              
+              console.log('[DEBUG] 错误匹配数量:', errorMatches.length);
+              console.log('[DEBUG] 警告匹配数量:', warningMatches.length);
+              console.log('[DEBUG] 建议匹配数量:', suggestionMatches.length);
+              
+              if (errorMatches.length > 0) {
+                console.log('[DEBUG] 错误详情:', errorMatches.map((m, i) => `${i+1}. ${m[1]}`));
+              }
+              if (warningMatches.length > 0) {
+                console.log('[DEBUG] 警告详情:', warningMatches.map((m, i) => `${i+1}. ${m[1]}`));
+              }
               
               // 提取摘要信息
               const errorCountMatch = mpdtReport.match(/错误:\s*(\d+)/);
@@ -523,11 +554,14 @@ jobs:
               const errorCount = errorCountMatch ? parseInt(errorCountMatch[1]) : errorMatches.length;
               const warningCount = warningCountMatch ? parseInt(warningCountMatch[1]) : warningMatches.length;
               
+              console.log('[DEBUG] 提取的错误数量:', errorCount);
+              console.log('[DEBUG] 提取的警告数量:', warningCount);
+              
               if (errorCount === 0 && warningCount === 0) {
                 comment += '> ✅ **MPDT 检查通过**\n\n';
               } else {
                 comment += `**检查摘要**: ${errorCount} 个错误, ${warningCount} 个警告\n\n`;
-                
+
                 // 显示错误
                 if (errorMatches.length > 0) {
                   comment += '### ❌ 错误\n\n';
