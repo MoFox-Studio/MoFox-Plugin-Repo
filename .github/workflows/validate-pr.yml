@@ -56,7 +56,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       
       # 步骤 5: 安装 MPDT 工具
       - name: Install MPDT
@@ -511,11 +511,45 @@ jobs:
             
             try {
               const mpdtReport = fs.readFileSync('mpdt-report.md', 'utf8');
-              // 将MPDT报告放入折叠区域
-              comment += '<details>\n';
-              comment += `<summary>📊 查看详细报告 ${hasMpdtErrors ? '(发现问题 ⚠️)' : '(通过 ✅)'}</summary>\n\n`;
-              comment += mpdtReport;
-              comment += '\n</details>\n\n';
+              
+              // 提取错误和警告信息
+              const errorMatches = [...mpdtReport.matchAll(/❌\s*ERROR:\s*(.+?)(?=\n|$)/g)];
+              const warningMatches = [...mpdtReport.matchAll(/⚠️\s*(?:WARNING|WARN):\s*(.+?)(?=\n|$)/g)];
+              const suggestionMatches = [...mpdtReport.matchAll(/建议:\s*(.+?)(?=\n|$)/g)];
+              
+              // 提取摘要信息
+              const errorCountMatch = mpdtReport.match(/错误:\s*(\d+)/);
+              const warningCountMatch = mpdtReport.match(/警告:\s*(\d+)/);
+              const errorCount = errorCountMatch ? parseInt(errorCountMatch[1]) : errorMatches.length;
+              const warningCount = warningCountMatch ? parseInt(warningCountMatch[1]) : warningMatches.length;
+              
+              if (errorCount === 0 && warningCount === 0) {
+                comment += '> ✅ **MPDT 检查通过**\n\n';
+              } else {
+                comment += `**检查摘要**: ${errorCount} 个错误, ${warningCount} 个警告\n\n`;
+                
+                // 显示错误
+                if (errorMatches.length > 0) {
+                  comment += '### ❌ 错误\n\n';
+                  errorMatches.forEach((match, index) => {
+                    comment += `${index + 1}. ${match[1].trim()}\n`;
+                    // 查找对应的建议
+                    if (suggestionMatches[index]) {
+                      comment += `   💡 *${suggestionMatches[index][1].trim()}*\n`;
+                    }
+                  });
+                  comment += '\n';
+                }
+                
+                // 显示警告
+                if (warningMatches.length > 0) {
+                  comment += '### ⚠️ 警告\n\n';
+                  warningMatches.forEach((match, index) => {
+                    comment += `${index + 1}. ${match[1].trim()}\n`;
+                  });
+                  comment += '\n> 💡 虽然警告不会阻止提交，但建议开发者修复这些问题以提高插件质量。\n\n';
+                }
+              }
             } catch (error) {
               comment += '> ⚠️ MPDT 检查未运行或未生成报告\n\n';
             }
