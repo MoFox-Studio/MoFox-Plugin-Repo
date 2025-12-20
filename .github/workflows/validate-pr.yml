@@ -330,10 +330,9 @@ jobs:
             exit 0
           fi
 
-          # 创建 MPDT 检查报告
-          echo "# MPDT 检查报告" > mpdt-report.md
-          echo "" >> mpdt-report.md
-          
+          # 初始化 JSON Lines 文件
+          echo "" > mpdt-reports.jsonl
+
           MPDT_ERRORS=0
           
           # 对每个插件进行检查
@@ -383,45 +382,29 @@ jobs:
             
             # 运行 MPDT check
             echo "运行 MPDT 检查: $PLUGIN_PATH"
-            if mpdt check "$PLUGIN_PATH" --report markdown --output "${PLUGIN_DIR}-report.md" 2>&1 | tee mpdt-output.txt; then
-              echo "## ✅ $REPO_NAME" >> mpdt-report.md
-              echo "" >> mpdt-report.md
-              echo "**MPDT 检查通过**" >> mpdt-report.md
-              echo "" >> mpdt-report.md
+            if mpdt check "$PLUGIN_PATH" --report json --output "${PLUGIN_DIR}-report.json" 2>&1 | tee mpdt-output.txt; then
+              echo "✅ MPDT 检查通过：$REPO_NAME"
               
-              # 如果生成了详细报告，追加它
-              if [ -f "${PLUGIN_DIR}-report.md" ]; then
-                echo "[DEBUG] 找到报告文件: ${PLUGIN_DIR}-report.md"
-                echo "[DEBUG] 报告文件内容:"
-                cat "${PLUGIN_DIR}-report.md"
-                echo "[DEBUG] 追加到总报告..."
-                cat "${PLUGIN_DIR}-report.md" >> mpdt-report.md
+              # 读取 JSON 报告
+              if [ -f "${PLUGIN_DIR}-report.json" ]; then
+                echo "[DEBUG] 找到 JSON 报告文件: ${PLUGIN_DIR}-report.json"
+                cat "${PLUGIN_DIR}-report.json" >> mpdt-reports.jsonl
+                echo "" >> mpdt-reports.jsonl
               fi
             else
-              echo "## ⚠️ $REPO_NAME" >> mpdt-report.md
-              echo "" >> mpdt-report.md
-              echo "**MPDT 检查发现问题**" >> mpdt-report.md
-              echo "" >> mpdt-report.md
+              echo "⚠️ MPDT 检查发现问题：$REPO_NAME"
               
-              # 追加详细报告
-              if [ -f "${PLUGIN_DIR}-report.md" ]; then
-                echo "[DEBUG] 找到报告文件: ${PLUGIN_DIR}-report.md"
-                echo "[DEBUG] 报告文件内容:"
-                cat "${PLUGIN_DIR}-report.md"
-                echo "[DEBUG] 追加到总报告..."
-                cat "${PLUGIN_DIR}-report.md" >> mpdt-report.md
+              # 读取 JSON 报告
+              if [ -f "${PLUGIN_DIR}-report.json" ]; then
+                echo "[DEBUG] 找到 JSON 报告文件: ${PLUGIN_DIR}-report.json"
+                cat "${PLUGIN_DIR}-report.json" >> mpdt-reports.jsonl
+                echo "" >> mpdt-reports.jsonl
               else
-                echo "[DEBUG] 未找到报告文件，使用标准输出"
-                echo "[DEBUG] mpdt-output.txt 内容:"
-                cat mpdt-output.txt
-                echo '```' >> mpdt-report.md
-                cat mpdt-output.txt >> mpdt-report.md
-                echo '```' >> mpdt-report.md
+                echo "[DEBUG] 未找到 JSON 报告文件"
               fi
               
               MPDT_ERRORS=$((MPDT_ERRORS + 1))
             fi
-            echo "" >> mpdt-report.md
             
             # 清理
             rm -rf "$PLUGIN_DIR"
@@ -430,13 +413,8 @@ jobs:
           # 保存错误计数
           echo "MPDT_ERRORS=$MPDT_ERRORS" >> $GITHUB_ENV
           
-          # 显示报告内容
-          echo "=== MPDT 检查报告 ==="
-          echo "[DEBUG] mpdt-report.md 文件大小: $(wc -c < mpdt-report.md) 字节"
-          echo "[DEBUG] mpdt-report.md 完整内容:"
-          cat mpdt-report.md
-          echo "[DEBUG] 报告内容结束"
-          
+          # 显示收集的报告
+          echo "=== MPDT 检查完成 ==="
           if [ $MPDT_ERRORS -gt 0 ]; then
             echo "⚠️ MPDT 检查发现 $MPDT_ERRORS 个问题"
           else
@@ -524,69 +502,90 @@ jobs:
             comment += '## 🔧 MPDT 静态检查\n\n';
             
             try {
-              const mpdtReport = fs.readFileSync('mpdt-report.md', 'utf8');
+              const mpdtReportsRaw = fs.readFileSync('mpdt-reports.jsonl', 'utf8');
+              const lines = mpdtReportsRaw.trim().split('\n').filter(line => line.trim());
               
-              console.log('[DEBUG] MPDT 报告文件大小:', mpdtReport.length, '字符');
-              console.log('[DEBUG] MPDT 报告内容:');
-              console.log('========================================');
-              console.log(mpdtReport);
-              console.log('========================================');
+              console.log('[DEBUG] MPDT 报告行数:', lines.length);
               
-              // 提取错误和警告信息 - 匹配Markdown格式的报告
-              // 格式: - ❌ **ERROR**: ...
-              // 格式: - ⚠️ **WARNING**: ...
-              const errorMatches = [...mpdtReport.matchAll(/-?\s*❌\s*\*\*ERROR\*\*:\s*(.+?)(?=\n|$)/g)];
-              const warningMatches = [...mpdtReport.matchAll(/-?\s*⚠️\s*\*\*(?:WARNING|WARN)\*\*:\s*(.+?)(?=\n|$)/g)];
-              const suggestionMatches = [...mpdtReport.matchAll(/建议:\s*(.+?)(?=\n|$)/g)];
-              
-              console.log('[DEBUG] 错误匹配数量:', errorMatches.length);
-              console.log('[DEBUG] 警告匹配数量:', warningMatches.length);
-              console.log('[DEBUG] 建议匹配数量:', suggestionMatches.length);
-              
-              if (errorMatches.length > 0) {
-                console.log('[DEBUG] 错误详情:', errorMatches.map((m, i) => `${i+1}. ${m[1]}`));
-              }
-              if (warningMatches.length > 0) {
-                console.log('[DEBUG] 警告详情:', warningMatches.map((m, i) => `${i+1}. ${m[1]}`));
-              }
-              
-              // 提取摘要信息
-              const errorCountMatch = mpdtReport.match(/错误:\s*(\d+)/);
-              const warningCountMatch = mpdtReport.match(/警告:\s*(\d+)/);
-              const errorCount = errorCountMatch ? parseInt(errorCountMatch[1]) : errorMatches.length;
-              const warningCount = warningCountMatch ? parseInt(warningCountMatch[1]) : warningMatches.length;
-              
-              console.log('[DEBUG] 提取的错误数量:', errorCount);
-              console.log('[DEBUG] 提取的警告数量:', warningCount);
-              
-              if (errorCount === 0 && warningCount === 0) {
-                comment += '> ✅ **MPDT 检查通过**\n\n';
+              if (lines.length === 0) {
+                comment += '> ⚠️ MPDT 检查未运行或未生成报告\n\n';
               } else {
-                comment += `**检查摘要**: ${errorCount} 个错误, ${warningCount} 个警告\n\n`;
-
-                // 显示错误
-                if (errorMatches.length > 0) {
-                  comment += '### ❌ 错误\n\n';
-                  errorMatches.forEach((match, index) => {
-                    comment += `${index + 1}. ${match[1].trim()}\n`;
-                    // 查找对应的建议
-                    if (suggestionMatches[index]) {
-                      comment += `   💡 *${suggestionMatches[index][1].trim()}*\n`;
-                    }
-                  });
-                  comment += '\n';
-                }
+                let totalErrors = 0;
+                let totalWarnings = 0;
+                let totalInfo = 0;
+                let allIssues = [];
                 
-                // 显示警告
-                if (warningMatches.length > 0) {
-                  comment += '### ⚠️ 警告\n\n';
-                  warningMatches.forEach((match, index) => {
-                    comment += `${index + 1}. ${match[1].trim()}\n`;
-                  });
-                  comment += '\n> 💡 虽然警告不会阻止提交，但建议开发者修复这些问题以提高插件质量。\n\n';
+                // 解析每个 JSON 报告
+                lines.forEach((line, index) => {
+                  try {
+                    const report = JSON.parse(line);
+                    console.log(`[DEBUG] 解析报告 ${index + 1}:`, JSON.stringify(report.summary));
+                    
+                    totalErrors += report.summary.total_errors || 0;
+                    totalWarnings += report.summary.total_warnings || 0;
+                    totalInfo += report.summary.total_info || 0;
+                    
+                    // 收集问题
+                    if (report.issues && Array.isArray(report.issues)) {
+                      allIssues.push(...report.issues);
+                    }
+                  } catch (e) {
+                    console.error(`[DEBUG] 解析报告 ${index + 1} 失败:`, e.message);
+                  }
+                });
+                
+                console.log('[DEBUG] 汇总 - 错误:', totalErrors, '警告:', totalWarnings, '信息:', totalInfo);
+                console.log('[DEBUG] 总问题数:', allIssues.length);
+                
+                if (totalErrors === 0 && totalWarnings === 0) {
+                  comment += '> ✅ **MPDT 检查通过**\n\n';
+                } else {
+                  comment += `**检查摘要**: ${totalErrors} 个错误, ${totalWarnings} 个警告\n\n`;
+                  
+                  // 显示错误
+                  const errors = allIssues.filter(issue => issue.level === 'error');
+                  if (errors.length > 0) {
+                    comment += '### ❌ 错误\n\n';
+                    errors.forEach((issue, index) => {
+                      comment += `${index + 1}. **[${issue.validator}]** ${issue.message}\n`;
+                      if (issue.file_path) {
+                        comment += `   📁 \`${issue.file_path}\``;
+                        if (issue.line_number) {
+                          comment += `:${issue.line_number}`;
+                        }
+                        comment += '\n';
+                      }
+                      if (issue.suggestion) {
+                        comment += `   💡 *${issue.suggestion}*\n`;
+                      }
+                      comment += '\n';
+                    });
+                  }
+                  
+                  // 显示警告（限制数量）
+                  const warnings = allIssues.filter(issue => issue.level === 'warning');
+                  if (warnings.length > 0) {
+                    comment += '### ⚠️ 警告\n\n';
+                    const displayWarnings = warnings.slice(0, 10); // 只显示前10个
+                    displayWarnings.forEach((issue, index) => {
+                      comment += `${index + 1}. **[${issue.validator}]** ${issue.message}\n`;
+                      if (issue.file_path) {
+                        comment += `   📁 \`${issue.file_path}\``;
+                        if (issue.line_number) {
+                          comment += `:${issue.line_number}`;
+                        }
+                        comment += '\n';
+                      }
+                    });
+                    if (warnings.length > 10) {
+                      comment += `\n*...还有 ${warnings.length - 10} 个警告未显示*\n`;
+                    }
+                    comment += '\n> 💡 虽然警告不会阻止提交，但建议开发者修复这些问题以提高插件质量。\n\n';
+                  }
                 }
               }
             } catch (error) {
+              console.error('[DEBUG] 读取或解析 MPDT 报告失败:', error.message);
               comment += '> ⚠️ MPDT 检查未运行或未生成报告\n\n';
             }
             
