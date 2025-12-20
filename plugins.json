@@ -35,4 +35,8 @@
     "id": "MirNeko.Auto_accept_requests_plugin",
     "repositoryUrl": "https://github.com/MirNeko/Auto_accept_requests_plugin.git"
   }
+  {
+    "id": "minecraft1024a.test",
+    "repositoryUrl": "https://github.com/minecraft1024a/just-a-test"
+  },
 ]
