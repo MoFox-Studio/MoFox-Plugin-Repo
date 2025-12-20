@@ -367,13 +367,13 @@ jobs:
             PLUGIN_PATH="$PLUGIN_DIR"
             
             # 查找 plugin.py 或 __init__.py 文件
-            if [ -f "$PLUGIN_DIR/plugin.py" ] || [ -f "$PLUGIN_DIR/__init__.py" ]; then
+            if [ -f "$PLUGIN_DIR/plugin.py" ] ; then
               PLUGIN_PATH="$PLUGIN_DIR"
               echo "✓ 在根目录找到插件文件"
             else
               # 遍历子目录查找插件文件
               for dir in "$PLUGIN_DIR"/*/ ; do
-                if [ -d "$dir" ] && ([ -f "${dir}plugin.py" ] || [ -f "${dir}__init__.py" ]); then
+                if [ -d "$dir" ] && ([ -f "${dir}plugin.py" ]); then
                   PLUGIN_PATH="$dir"
                   echo "✓ 在 $(basename "$dir") 目录找到插件文件"
                   break
