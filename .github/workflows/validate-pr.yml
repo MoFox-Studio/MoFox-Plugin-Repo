@@ -532,9 +532,11 @@ jobs:
               console.log(mpdtReport);
               console.log('========================================');
               
-              // 提取错误和警告信息
-              const errorMatches = [...mpdtReport.matchAll(/❌\s*ERROR:\s*(.+?)(?=\n|$)/g)];
-              const warningMatches = [...mpdtReport.matchAll(/⚠️\s*(?:WARNING|WARN):\s*(.+?)(?=\n|$)/g)];
+              // 提取错误和警告信息 - 匹配Markdown格式的报告
+              // 格式: - ❌ **ERROR**: ...
+              // 格式: - ⚠️ **WARNING**: ...
+              const errorMatches = [...mpdtReport.matchAll(/-?\s*❌\s*\*\*ERROR\*\*:\s*(.+?)(?=\n|$)/g)];
+              const warningMatches = [...mpdtReport.matchAll(/-?\s*⚠️\s*\*\*(?:WARNING|WARN)\*\*:\s*(.+?)(?=\n|$)/g)];
               const suggestionMatches = [...mpdtReport.matchAll(/建议:\s*(.+?)(?=\n|$)/g)];
               
               console.log('[DEBUG] 错误匹配数量:', errorMatches.length);
