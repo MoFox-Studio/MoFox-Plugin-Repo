@@ -563,7 +563,7 @@ jobs:
                   const warnings = allIssues.filter(issue => issue.level === 'warning');
                   if (warnings.length > 0) {
                     comment += '### ⚠️ 警告\n\n';
-                    const displayWarnings = warnings.slice(0, 10); // 只显示前10个
+                    const displayWarnings = warnings.slice(0, 15); // 只显示前10个
                     displayWarnings.forEach((issue, index) => {
                       comment += `${index + 1}. **[${issue.validator}]** ${issue.message}\n`;
                       if (issue.file_path) {
@@ -573,6 +573,10 @@ jobs:
                         }
                         comment += '\n';
                       }
+                      if (issue.suggestion) {
+                        comment += `   💡 *${issue.suggestion}*\n`;
+                      }
+                      comment += '\n';
                     });
                     if (warnings.length > 10) {
                       comment += `\n*...还有 ${warnings.length - 10} 个警告未显示*\n`;
