@@ -567,7 +567,7 @@ jobs:
                     displayWarnings.forEach((issue, index) => {
                       comment += `${index + 1}. **[${issue.validator}]** ${issue.message}\n`;
                       if (issue.file_path) {
-                        comment += `   📁 \`${issue.file_path}\``;
+                        comment += `   📁文件路径： \`${issue.file_path}\``;
                         if (issue.line_number) {
                           comment += `:${issue.line_number}`;
                         }
