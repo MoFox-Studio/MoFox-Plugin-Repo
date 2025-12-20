@@ -18,6 +18,11 @@ jobs:
   validate:
     # 指定作业运行的虚拟环境
     runs-on: ubuntu-latest
+    # 配置 GitHub Token 权限
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
     # 作业中执行的步骤
     steps:
       # 步骤 1: 检出 main 分支的代码
@@ -53,10 +58,12 @@ jobs:
       # 步骤 5: 安装 MPDT 工具
       - name: Install MPDT
         run: |
-          pip install mofox-plugin-toolkit
+          pip install mofox-plugin-dev-toolkit
 
       # 步骤 6: 验证新的插件条目
       - name: Validate new plugin entry
+        id: validate
+        continue-on-error: true
         # 运行一个内联的 Node.js 脚本
         run: |
           node <<'EOL'
@@ -169,8 +176,9 @@ jobs:
                 }
               }
 
-              // 保存验证结果到文件
+              // 始终保存验证结果到文件（即使有错误）
               fs.writeFileSync('validation-result.json', JSON.stringify(validationResult, null, 2));
+              console.log('验证结果已保存到 validation-result.json');
 
               // 如果存在任何验证错误，则抛出异常并使 Action 失败
               if (validationErrors.length > 0) {
