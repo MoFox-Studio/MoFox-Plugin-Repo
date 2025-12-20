@@ -58,10 +58,11 @@ jobs:
         with:
           python-version: '3.12'
       
-      # 步骤 5: 安装 MPDT 工具
-      - name: Install MPDT
+      # 步骤 5: 安装依赖工具
+      - name: Install dependencies
         run: |
           pip install mofox-plugin-dev-toolkit
+          sudo apt-get update && sudo apt-get install -y jq
 
       # 步骤 6: 验证新的插件条目
       - name: Validate new plugin entry
@@ -330,8 +331,8 @@ jobs:
             exit 0
           fi
 
-          # 初始化 JSON Lines 文件
-          echo "" > mpdt-reports.jsonl
+          # 初始化 JSON 数组文件
+          echo '[]' > mpdt-reports.json
 
           MPDT_ERRORS=0
           
@@ -385,20 +386,21 @@ jobs:
             if mpdt check "$PLUGIN_PATH" --report json --output "${PLUGIN_DIR}-report.json" 2>&1 | tee mpdt-output.txt; then
               echo "✅ MPDT 检查通过：$REPO_NAME"
               
-              # 读取 JSON 报告
+              # 使用 jq 将报告添加到数组中
               if [ -f "${PLUGIN_DIR}-report.json" ]; then
                 echo "[DEBUG] 找到 JSON 报告文件: ${PLUGIN_DIR}-report.json"
-                cat "${PLUGIN_DIR}-report.json" >> mpdt-reports.jsonl
-                echo "" >> mpdt-reports.jsonl
+                # 将新报告添加到数组中
+                jq -s '.[0] + [.[1]]' mpdt-reports.json "${PLUGIN_DIR}-report.json" > mpdt-reports-tmp.json
+                mv mpdt-reports-tmp.json mpdt-reports.json
               fi
             else
               echo "⚠️ MPDT 检查发现问题：$REPO_NAME"
               
-              # 读取 JSON 报告
+              # 使用 jq 将报告添加到数组中
               if [ -f "${PLUGIN_DIR}-report.json" ]; then
                 echo "[DEBUG] 找到 JSON 报告文件: ${PLUGIN_DIR}-report.json"
-                cat "${PLUGIN_DIR}-report.json" >> mpdt-reports.jsonl
-                echo "" >> mpdt-reports.jsonl
+                jq -s '.[0] + [.[1]]' mpdt-reports.json "${PLUGIN_DIR}-report.json" > mpdt-reports-tmp.json
+                mv mpdt-reports-tmp.json mpdt-reports.json
               else
                 echo "[DEBUG] 未找到 JSON 报告文件"
               fi
@@ -502,12 +504,12 @@ jobs:
             comment += '## 🔧 MPDT 静态检查\n\n';
             
             try {
-              const mpdtReportsRaw = fs.readFileSync('mpdt-reports.jsonl', 'utf8');
-              const lines = mpdtReportsRaw.trim().split('\n').filter(line => line.trim());
+              const mpdtReportsRaw = fs.readFileSync('mpdt-reports.json', 'utf8');
+              const reports = JSON.parse(mpdtReportsRaw);
               
-              console.log('[DEBUG] MPDT 报告行数:', lines.length);
+              console.log('[DEBUG] MPDT 报告数量:', reports.length);
               
-              if (lines.length === 0) {
+              if (!Array.isArray(reports) || reports.length === 0) {
                 comment += '> ⚠️ MPDT 检查未运行或未生成报告\n\n';
               } else {
                 let totalErrors = 0;
@@ -516,21 +518,16 @@ jobs:
                 let allIssues = [];
                 
                 // 解析每个 JSON 报告
-                lines.forEach((line, index) => {
-                  try {
-                    const report = JSON.parse(line);
-                    console.log(`[DEBUG] 解析报告 ${index + 1}:`, JSON.stringify(report.summary));
-                    
-                    totalErrors += report.summary.total_errors || 0;
-                    totalWarnings += report.summary.total_warnings || 0;
-                    totalInfo += report.summary.total_info || 0;
-                    
-                    // 收集问题
-                    if (report.issues && Array.isArray(report.issues)) {
-                      allIssues.push(...report.issues);
-                    }
-                  } catch (e) {
-                    console.error(`[DEBUG] 解析报告 ${index + 1} 失败:`, e.message);
+                reports.forEach((report, index) => {
+                  console.log(`[DEBUG] 解析报告 ${index + 1}:`, JSON.stringify(report.summary));
+                  
+                  totalErrors += report.summary.total_errors || 0;
+                  totalWarnings += report.summary.total_warnings || 0;
+                  totalInfo += report.summary.total_info || 0;
+                  
+                  // 收集问题
+                  if (report.issues && Array.isArray(report.issues)) {
+                    allIssues.push(...report.issues);
                   }
                 });
                 
