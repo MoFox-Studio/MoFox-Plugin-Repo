@@ -188,5 +188,39 @@
       "extra": "{\n        \"is_built_in\": true,\n    }"
     },
     "createdAt": "2026-01-02T09:34:38.719Z"
+  },
+  {
+    "id": "tt-P607.tts_voice_plugin",
+    "manifest": {
+      "name": "GPT-SoVITS 语音合成插件",
+      "description": "基于 GPT-SoVITS 的文本转语音插件，支持多种语言和多风格语音合成。",
+      "usage": " ",
+      "version": "2.0.0",
+      "author": "言柒",
+      "license": "AGPL-v3.0",
+      "repository_url": "https://github.com/xuqian13/tts_voice_plugin",
+      "keywords": [
+        "tts",
+        "语音合成",
+        "文本转语音",
+        "gpt-sovits",
+        "语音",
+        "朗读",
+        "多风格",
+        "语音播报"
+      ],
+      "categories": [
+        "Utility",
+        "Communication",
+        "Accessibility"
+      ],
+      "extra": "{\n        \"is_built_in\": false,\n        \"plugin_type\": \"tools\",\n    }",
+      "python_dependencies": [
+        "aiohttp",
+        "soundfile",
+        "pedalboard"
+      ]
+    },
+    "createdAt": "2026-01-02T10:06:49.811Z"
   }
 ]
