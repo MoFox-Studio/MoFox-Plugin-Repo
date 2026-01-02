@@ -163,5 +163,30 @@
       "extra": "{\n        \"is_built_in\": false,\n        \"chat_type\": \"private\",\n        \"original_project\": \"https://github.com/MaiM-with-u/MaiBot\",\n        \"original_version\": \"0.6.3-fix4\",\n    }"
     },
     "createdAt": "2025-12-31T14:37:08.294Z"
+  },
+  {
+    "id": "tt-P607.smart_flow_controller",
+    "manifest": {
+      "name": "smart_flow_controller",
+      "description": "智能流量调节插件 - 监控发信烈度，自动切换并行/串行发送模式以规避风控",
+      "usage": "插件自动工作，通过钩子拦截所有消息发送，根据烈度自动调节发送节奏。",
+      "version": "1.0.0",
+      "author": "MoFox Team",
+      "license": "GPL-v3.0-or-later",
+      "repository_url": "https://github.com/MoFox-Team/MoFox-Bot",
+      "keywords": [
+        "flow-control",
+        "rate-limit",
+        "anti-ban",
+        "queue",
+        "throttle"
+      ],
+      "categories": [
+        "system",
+        "protection"
+      ],
+      "extra": "{\n        \"is_built_in\": true,\n    }"
+    },
+    "createdAt": "2026-01-02T09:34:38.719Z"
   }
 ]
