@@ -28,8 +28,8 @@
     "repositoryUrl": "https://github.com/ikun-11451/battery_plugin"
   },
   {
-      "id": "bingyv92.small_diseaes",
-      "repositoryUrl": "https://github.com/bingyv92/small_diseaes"
+    "id": "bingyv92.small_diseaes",
+    "repositoryUrl": "https://github.com/bingyv92/small_diseaes"
   },
   {
     "id": "MirNeko.Auto_accept_requests_plugin",
@@ -38,5 +38,9 @@
   {
     "id": "ASUSwei114.prefrontal_cortex_chatter",
     "repositoryUrl": "https://github.com/ASUSwei114/prefrontal_cortex_chatter"
+  },
+  {
+    "id": "tt-P607.smart_flow_controller",
+    "repositoryUrl": "https://github.com/tt-P607/smart_flow_controller"
   }
 ]
