@@ -42,5 +42,9 @@
   {
     "id": "tt-P607.smart_flow_controller",
     "repositoryUrl": "https://github.com/tt-P607/smart_flow_controller"
+  },
+  {
+    "id": "tt-P607.tts_voice_plugin",
+    "repositoryUrl": "https://github.com/tt-P607/tts_voice_plugin"
   }
 ]
