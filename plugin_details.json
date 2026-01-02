@@ -171,9 +171,9 @@
       "description": "智能流量调节插件 - 监控发信烈度，自动切换并行/串行发送模式以规避风控",
       "usage": "插件自动工作，通过钩子拦截所有消息发送，根据烈度自动调节发送节奏。",
       "version": "1.0.0",
-      "author": "MoFox Team",
+      "author": "言柒",
       "license": "GPL-v3.0-or-later",
-      "repository_url": "https://github.com/MoFox-Team/MoFox-Bot",
+      "repository_url": "https://github.com/tt-P607/smart_flow_controller",
       "keywords": [
         "flow-control",
         "rate-limit",
@@ -196,9 +196,9 @@
       "description": "基于 GPT-SoVITS 的文本转语音插件，支持多种语言和多风格语音合成。",
       "usage": " ",
       "version": "2.0.0",
-      "author": "言柒",
+      "author": "言柒 & 靚仔",
       "license": "AGPL-v3.0",
-      "repository_url": "https://github.com/xuqian13/tts_voice_plugin",
+      "repository_url": "https://github.com/tt-P607/tts_voice_plugin",
       "keywords": [
         "tts",
         "语音合成",
@@ -222,5 +222,31 @@
       ]
     },
     "createdAt": "2026-01-02T10:06:49.811Z"
+  },
+  {
+    "id": "tt-P607.biometric_sleep_plugin",
+    "manifest": {
+      "name": "biometric_sleep_plugin",
+      "description": "仿生睡眠插件 - 为机器人提供类人的睡眠/清醒周期模拟，支持唤醒度机制和状态提示词注入",
+      "usage": "在配置文件中设置 start_time 和 end_time 即可，支持随机浮动和唤醒度阈值配置",
+      "version": "2.0.0",
+      "author": "言柒",
+      "license": "GPL-v3.0-or-later",
+      "repository_url": "https://github.com/tt-P607/biometric_sleep_plugin",
+      "keywords": [
+        "sleep",
+        "biometric",
+        "circadian",
+        "personality",
+        "role-play",
+        "interceptor"
+      ],
+      "categories": [
+        "utility",
+        "personality"
+      ],
+      "extra": "{\n        \"is_built_in\": true,\n    }"
+    },
+    "createdAt": "2026-01-02T18:26:25.924Z"
   }
 ]
