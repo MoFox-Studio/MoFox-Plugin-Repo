@@ -46,5 +46,9 @@
   {
     "id": "tt-P607.tts_voice_plugin",
     "repositoryUrl": "https://github.com/tt-P607/tts_voice_plugin"
+  },
+  {
+    "id": "tt-P607.biometric_sleep_plugin",
+    "repositoryUrl": "https://github.com/tt-P607/biometric_sleep_plugin"
   }
 ]
