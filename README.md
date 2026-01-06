@@ -6,11 +6,11 @@
 
 欢迎来到 MoFox-Bot 官方社区插件索引仓库！
 
-这里是所有为 [MoFox-Bot](https://github.com/MoFox-Studio/MoFox_Bot) 开发的社区插件的中央列表。我们的目标是建立一个开放、透明、高质量的插件生态系统。
+这里是所有为 [MoFox-Bot](https://github.com/MoFox-Studio/MoFox-Core) 开发的社区插件的中央列表。我们的目标是建立一个开放、透明、高质量的插件生态系统。
 
 ## 🎯 插件展示页面
 
-您可以通过我们的 **[插件展示页面](https://plugins.mofox.chat/)** 浏览所有可用的插件，该页面提供了：
+您可以通过我们的 **[插件展示页面](https://plugin.mofox-sama.com/)** 浏览所有可用的插件，该页面提供了：
 
 - 🔍 智能搜索功能
 - 📊 插件详细信息
