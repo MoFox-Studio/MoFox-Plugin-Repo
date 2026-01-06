@@ -274,5 +274,32 @@
       "extra": "{\n        \"is_built_in\": false,\n    }"
     },
     "createdAt": "2026-01-06T16:37:09.031Z"
+  },
+  {
+    "id": "ikun-11451.box_plugin",
+    "manifest": {
+      "name": "开盒插件",
+      "description": "利用Onebot协议的接口获取QQ用户信息,并以图片形式展示",
+      "usage": "",
+      "version": "1.0.0",
+      "author": "ikun两年半",
+      "license": "AGPL",
+      "repository_url": "https://github.com/ikun-11451/box_plugin",
+      "keywords": [
+        "开盒",
+        "QQ信息",
+        "用户信息",
+        "娱乐"
+      ],
+      "categories": [
+        "娱乐",
+        "信息"
+      ],
+      "python_dependencies": "[\n        PythonDependency(\n            package_name=\"PIL\",\n            install_name=\"Pillow\",\n            version=\">=9.0.0\",\n            description=\"图片处理库，用于生成开盒卡片\"\n        ),\n        PythonDependency(\n            package_name=\"emoji\",\n            version=\">=2.0.0\",\n            description=\"Emoji处理库，用于显示Emoji\"\n        ),\n        PythonDependency(\n            package_name=\"zhdate\",\n            version=\">=0.1.0\",\n            description=\"农历日期处理库，用于计算生肖\"\n        )\n    ]",
+      "dependencies": [],
+      "type": null,
+      "extra": "{\n        \"is_built_in\": false,\n        \"plugin_type\": \"entertainment\",\n    }"
+    },
+    "createdAt": "2026-01-06T22:25:54.518Z"
   }
 ]
