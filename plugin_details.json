@@ -248,5 +248,31 @@
       "extra": "{\n        \"is_built_in\": true,\n    }"
     },
     "createdAt": "2026-01-02T18:26:25.924Z"
+  },
+  {
+    "id": "tt-P607.continuous_diary",
+    "manifest": {
+      "name": "continuous_diary_memory",
+      "description": "用bot的主观视角记录近期对话，像写日记一样提供完整的上下文。时间分层：今天详细、昨天简略、前天更简略。",
+      "usage": "自动触发，每累积一定消息数自动生成日记总结，在回复时自动注入到提示词中。",
+      "version": "1.0.0",
+      "author": "言柒",
+      "license": "GPL-v3.0-or-later",
+      "repository_url": "https://github.com/tt-P607/continuous_diary",
+      "keywords": [
+        "memory",
+        "diary",
+        "context",
+        "continuous",
+        "subjective"
+      ],
+      "categories": [
+        "memory",
+        "enhancement",
+        "personality"
+      ],
+      "extra": "{\n        \"is_built_in\": false,\n    }"
+    },
+    "createdAt": "2026-01-06T16:37:09.031Z"
   }
 ]
