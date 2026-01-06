@@ -28,4 +28,4 @@
 
 ## ⚖️ 许可证
 
-本仓库本身使用 [GPLV3 License](./LICENSE) 进行许可。所收录的插件使用其各自仓库中指定的许可证。
+本仓库本身使用 [GPLV3 License](https://www.gnu.org/licenses/gpl-3.0.html) 进行许可。所收录的插件使用其各自仓库中指定的许可证。
