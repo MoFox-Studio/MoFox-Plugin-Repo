@@ -1,11 +1,66 @@
 [
-    {
-        "id": "minecraft1024a.MaiBot-Send-Image-Plugin-SF",
-        "repositoryUrl": "https://github.com/minecraft1024a/MaiBot-Send-Image-Plugin-SF"
-    },
-    {
-        "id": "minecraft1024a.MaiBot-Send-Image-Plugin-SF",
-        "repositoryUrl": "https://github.com/minecraft1024a/MaiBot-Send-Image-Plugin-SF"
-    }
+  {
+    "id": "MoFox-Studio.MoFox-Plugin-Template-repo",
+    "repositoryUrl": "https://github.com/MoFox-Studio/MoFox-Plugin-Template-repo"
+  },
+  {
+    "id": "minecraft1024a.MaiBot-Send-Image-Plugin-SF",
+    "repositoryUrl": "https://github.com/minecraft1024a/MaiBot-Send-Image-Plugin-SF"
+  },
+  {
+    "id": "dice-and-tarot",
+    "repositoryUrl": "https://github.com/SolenmeChiara/mofox-dice-tarot-plugin"
+  },
+  {
+    "id": "bingyv92.Muteplgin",
+    "repositoryUrl": "https://github.com/bingyv92/Muteplgin"
+  },
+  {
+    "id": "bingyv92.mofox_period_plugin",
+    "repositoryUrl": "https://github.com/bingyv92/mofox_period_plugin"
+  },
+  {
+    "id": "minecraft1024a.Bot_Status_Plugin",
+    "repositoryUrl": "https://github.com/minecraft1024a/Bot_Status_Plugin"
+  },
+  {
+    "id": "ikun-11451.battery_plugin",
+    "repositoryUrl": "https://github.com/ikun-11451/battery_plugin"
+  },
+  {
+    "id": "bingyv92.small_diseaes",
+    "repositoryUrl": "https://github.com/bingyv92/small_diseaes"
+  },
+  {
+    "id": "MirNeko.Auto_accept_requests_plugin",
+    "repositoryUrl": "https://github.com/MirNeko/Auto_accept_requests_plugin.git"
+  },
+  {
+    "id": "ASUSwei114.prefrontal_cortex_chatter",
+    "repositoryUrl": "https://github.com/ASUSwei114/prefrontal_cortex_chatter"
+  },
+  {
+    "id": "tt-P607.smart_flow_controller",
+    "repositoryUrl": "https://github.com/tt-P607/smart_flow_controller"
+  },
+  {
+    "id": "tt-P607.tts_voice_plugin",
+    "repositoryUrl": "https://github.com/tt-P607/tts_voice_plugin"
+  },
+  {
+    "id": "tt-P607.biometric_sleep_plugin",
+    "repositoryUrl": "https://github.com/tt-P607/biometric_sleep_plugin"
+  },
+  {
+    "id": "tt-P607.continuous_diary",
+    "repositoryUrl": "https://github.com/tt-P607/continuous_diary"
+  },
+  {
+    "id": "ikun-11451.box_plugin",
+    "repositoryUrl": "https://github.com/ikun-11451/box_plugin"
+  },
+  {
+    "id": "bingyv92.custom_prompt_injector",
+    "repositoryUrl": "https://github.com/bingyv92/custom_prompt_injector"
+  }
 ]
-
