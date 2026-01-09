@@ -10,6 +10,296 @@
       "license": "MIT",
       "repository_url": "https://github.com/minecraft1024a/MaiBot-Send-Image-Plugin-SF"
     },
-    "createdAt": "2025-10-25T00:38:05.333Z"
+    "createdAt": "2025-10-31T12:02:20.540Z"
+  },
+  {
+    "id": "dice-and-tarot",
+    "manifest": {
+      "name": "骰子与塔罗牌插件 (Dice and Tarot)",
+      "description": "提供 DND 骰子投掷和赛博塔罗牌占卜功能。支持标准DND骰子表达式（如2d6+3），包含完整78张塔罗牌，随机正位/逆位占卜。",
+      "usage": "",
+      "version": "1.0.0",
+      "author": "MoFox Community",
+      "license": "MIT",
+      "repository_url": "https://github.com/SolenmeChiara/mofox-dice-tarot-plugin",
+      "keywords": [
+        "dice",
+        "tarot",
+        "dnd",
+        "骰子",
+        "塔罗牌",
+        "娱乐",
+        "占卜",
+        "游戏"
+      ],
+      "categories": [
+        "Entertainment",
+        "Games",
+        "Fun"
+      ],
+      "extra": "{\n        \"is_built_in\": false,  # 第三方插件\n        \"plugin_type\": \"entertainment\",\n        \"min_bot_version\": \"1.0.0\",\n        \"python_version\": \">=3.11\",\n    }"
+    },
+    "createdAt": "2025-10-31T12:24:05.706Z"
+  },
+  {
+    "id": "bingyv92.Muteplgin",
+    "manifest": {
+      "name": "群聊禁言管理插件 Mute Plugin",
+      "description": "群聊禁言管理插件",
+      "usage": "在群聊中提供智能禁言功能",
+      "version": "4.2.0",
+      "author": "SengokuCola",
+      "license": "MIT",
+      "repository_url": "https://github.com/bingyv92/Muteplgin"
+    },
+    "createdAt": "2025-10-31T12:24:05.810Z"
+  },
+  {
+    "id": "bingyv92.mofox_period_plugin",
+    "manifest": {
+      "name": "月经周期状态插件",
+      "description": "模拟女性月经周期对机器人状态的影响，让机器人具有生物节律",
+      "usage": "根据月经周期调整机器人的生理和心理状态，影响回复风格",
+      "version": "1.0.0",
+      "author": "bingyv92",
+      "license": "MIT",
+      "repository_url": "https://github.com/bingyv92/mofox_period_plugin"
+    },
+    "createdAt": "2025-10-31T13:20:25.415Z"
+  },
+  {
+    "id": "minecraft1024a.Bot_Status_Plugin",
+    "manifest": {
+      "name": "BotStatus",
+      "description": "一个用于生成机器人和系统状态图的插件。",
+      "usage": "/status",
+      "version": "1.0.0",
+      "author": "YiShan",
+      "license": "GPL-v3.0-or-later",
+      "repository_url": "https://github.com/minecraft1024a/Bot_Status_Plugin/",
+      "keywords": [
+        "status",
+        "statistics",
+        "management"
+      ],
+      "extra": "{\n        \"plugin_type\": \"info\",\n    }",
+      "python_dependencies": [
+        "psutil",
+        "Pillow"
+      ]
+    },
+    "createdAt": "2025-11-12T09:09:57.944Z"
+  },
+  {
+    "id": "ikun-11451.battery_plugin",
+    "manifest": {
+      "name": "Battery Plugin",
+      "description": "手机电量模拟插件，回复消耗电量，特定地点自动充电。",
+      "usage": "插件加载后自动运行，使用 /battery 查看状态",
+      "version": "1.0.0",
+      "author": "ikun两年半喵",
+      "license": "GPL-3.0",
+      "repository_url": "https://github.com/ikun-11451/battery_plugin/",
+      "keywords": [
+        "battery",
+        "simulation",
+        "roleplay"
+      ],
+      "categories": [
+        "娱乐",
+        "角色扮演"
+      ],
+      "extra": "{\n        \"is_built_in\": false,\n        \"plugin_type\": \"user\",\n    }"
+    },
+    "createdAt": "2025-12-10T13:43:38.725Z"
+  },
+  {
+    "id": "bingyv92.small_diseaes",
+    "manifest": {
+      "name": "生小病插件",
+      "description": "一个模拟麦麦生病状态的插件，通过Prompt组件影响AI回复风格",
+      "usage": "",
+      "author": "bingyv92",
+      "version": "1.0.0",
+      "license": "MIT",
+      "keywords": [
+        "生病",
+        "健康",
+        "状态",
+        "Prompt",
+        "语气"
+      ],
+      "categories": [
+        "娱乐",
+        "功能"
+      ],
+      "repository_url": "https://github.com/bingyv92/small_diseaes"
+    },
+    "createdAt": "2025-12-12T11:58:32.123Z"
+  },
+  {
+    "id": "ASUSwei114.prefrontal_cortex_chatter",
+    "manifest": {
+      "name": "Prefrontal Cortex Chatter",
+      "description": "从 MaiM-with-u 0.6.3-fix4 移植的私聊系统，支持目标驱动的对话管理、多种行动类型、回复质量检查等功能",
+      "usage": "在私聊场景中自动启用，可通过 config/plugins/prefrontal_cortex_chatter/config.toml 配置",
+      "version": "1.0.0",
+      "author": "ASUSwei114",
+      "license": "GPL-3.0-or-later",
+      "repository_url": "https://github.com/ASUSwei114/prefrontal_cortex_chatter",
+      "keywords": [
+        "chatter",
+        "pfc",
+        "private",
+        "goal-driven",
+        "planning",
+        "maibot"
+      ],
+      "categories": [
+        "Chat",
+        "AI",
+        "Planning"
+      ],
+      "extra": "{\n        \"is_built_in\": false,\n        \"chat_type\": \"private\",\n        \"original_project\": \"https://github.com/MaiM-with-u/MaiBot\",\n        \"original_version\": \"0.6.3-fix4\",\n    }"
+    },
+    "createdAt": "2025-12-31T14:37:08.294Z"
+  },
+  {
+    "id": "tt-P607.smart_flow_controller",
+    "manifest": {
+      "name": "smart_flow_controller",
+      "description": "智能流量调节插件 - 监控发信烈度，自动切换并行/串行发送模式以规避风控",
+      "usage": "插件自动工作，通过钩子拦截所有消息发送，根据烈度自动调节发送节奏。",
+      "version": "1.0.0",
+      "author": "言柒",
+      "license": "GPL-v3.0-or-later",
+      "repository_url": "https://github.com/tt-P607/smart_flow_controller",
+      "keywords": [
+        "flow-control",
+        "rate-limit",
+        "anti-ban",
+        "queue",
+        "throttle"
+      ],
+      "categories": [
+        "system",
+        "protection"
+      ],
+      "extra": "{\n        \"is_built_in\": true,\n    }"
+    },
+    "createdAt": "2026-01-02T09:34:38.719Z"
+  },
+  {
+    "id": "tt-P607.tts_voice_plugin",
+    "manifest": {
+      "name": "GPT-SoVITS 语音合成插件",
+      "description": "基于 GPT-SoVITS 的文本转语音插件，支持多种语言和多风格语音合成。",
+      "usage": " ",
+      "version": "2.0.0",
+      "author": "言柒 & 靚仔",
+      "license": "AGPL-v3.0",
+      "repository_url": "https://github.com/tt-P607/tts_voice_plugin",
+      "keywords": [
+        "tts",
+        "语音合成",
+        "文本转语音",
+        "gpt-sovits",
+        "语音",
+        "朗读",
+        "多风格",
+        "语音播报"
+      ],
+      "categories": [
+        "Utility",
+        "Communication",
+        "Accessibility"
+      ],
+      "extra": "{\n        \"is_built_in\": false,\n        \"plugin_type\": \"tools\",\n    }",
+      "python_dependencies": [
+        "aiohttp",
+        "soundfile",
+        "pedalboard"
+      ]
+    },
+    "createdAt": "2026-01-02T10:06:49.811Z"
+  },
+  {
+    "id": "tt-P607.biometric_sleep_plugin",
+    "manifest": {
+      "name": "biometric_sleep_plugin",
+      "description": "仿生睡眠插件 - 为机器人提供类人的睡眠/清醒周期模拟，支持唤醒度机制和状态提示词注入",
+      "usage": "在配置文件中设置 start_time 和 end_time 即可，支持随机浮动和唤醒度阈值配置",
+      "version": "2.0.0",
+      "author": "言柒",
+      "license": "GPL-v3.0-or-later",
+      "repository_url": "https://github.com/tt-P607/biometric_sleep_plugin",
+      "keywords": [
+        "sleep",
+        "biometric",
+        "circadian",
+        "personality",
+        "role-play",
+        "interceptor"
+      ],
+      "categories": [
+        "utility",
+        "personality"
+      ],
+      "extra": "{\n        \"is_built_in\": true,\n    }"
+    },
+    "createdAt": "2026-01-02T18:26:25.924Z"
+  },
+  {
+    "id": "tt-P607.continuous_diary",
+    "manifest": {
+      "name": "continuous_diary_memory",
+      "description": "用bot的主观视角记录近期对话，像写日记一样提供完整的上下文。时间分层：今天详细、昨天简略、前天更简略。",
+      "usage": "自动触发，每累积一定消息数自动生成日记总结，在回复时自动注入到提示词中。",
+      "version": "1.0.0",
+      "author": "言柒",
+      "license": "GPL-v3.0-or-later",
+      "repository_url": "https://github.com/tt-P607/continuous_diary",
+      "keywords": [
+        "memory",
+        "diary",
+        "context",
+        "continuous",
+        "subjective"
+      ],
+      "categories": [
+        "memory",
+        "enhancement",
+        "personality"
+      ],
+      "extra": "{\n        \"is_built_in\": false,\n    }"
+    },
+    "createdAt": "2026-01-06T16:37:09.031Z"
+  },
+  {
+    "id": "ikun-11451.box_plugin",
+    "manifest": {
+      "name": "开盒插件",
+      "description": "利用Onebot协议的接口获取QQ用户信息,并以图片形式展示",
+      "usage": "",
+      "version": "1.2.0",
+      "author": "ikun两年半",
+      "license": "AGPL",
+      "repository_url": "https://github.com/ikun-11451/box_plugin",
+      "keywords": [
+        "开盒",
+        "QQ信息",
+        "用户信息",
+        "娱乐"
+      ],
+      "categories": [
+        "娱乐",
+        "信息"
+      ],
+      "python_dependencies": "[\n        PythonDependency(\n            package_name=\"PIL\",\n            install_name=\"Pillow\",\n            version=\">=9.0.0\",\n            description=\"图片处理库，用于生成开盒卡片\"\n        ),\n        PythonDependency(\n            package_name=\"emoji\",\n            version=\">=2.0.0\",\n            description=\"Emoji处理库，用于显示Emoji\"\n        ),\n        PythonDependency(\n            package_name=\"zhdate\",\n            version=\">=0.1.0\",\n            description=\"农历日期处理库，用于计算生肖\"\n        )\n    ]",
+      "dependencies": [],
+      "type": null,
+      "extra": "{\n        \"is_built_in\": false,\n        \"plugin_type\": \"entertainment\",\n    }"
+    },
+    "createdAt": "2026-01-06T22:25:54.518Z"
   }
 ]

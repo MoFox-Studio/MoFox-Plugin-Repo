@@ -3,8 +3,9 @@ name: Validate Plugin Submission
 
 # 触发工作流程的事件
 on:
-  # 当有 pull request 事件时触发
-  pull_request:
+  # 使用 pull_request_target 以获得写入评论的权限
+  # 注意：此事件在主仓库上下文中运行，具有写入权限
+  pull_request_target:
     # 仅针对目标是 main 分支的 pull request
     branches:
       - main
@@ -18,6 +19,11 @@ jobs:
   validate:
     # 指定作业运行的虚拟环境
     runs-on: ubuntu-latest
+    # 配置 GitHub Token 权限
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
     # 作业中执行的步骤
     steps:
       # 步骤 1: 检出 main 分支的代码
@@ -34,6 +40,8 @@ jobs:
       - name: Checkout PR branch
         uses: actions/checkout@v4
         with:
+          # 检出 PR 的 head ref（来自 fork 的分支）
+          ref: ${{ github.event.pull_request.head.sha }}
           # 将代码检出到 'pr' 目录下
           path: pr
 
@@ -44,8 +52,22 @@ jobs:
           # 指定 Node.js 版本为 '20'
           node-version: '20'
 
-      # 步骤 4: 验证新的插件条目
+      # 步骤 4: 设置 Python 环境
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      # 步骤 5: 安装依赖工具
+      - name: Install dependencies
+        run: |
+          pip install mofox-plugin-dev-toolkit
+          sudo apt-get update && sudo apt-get install -y jq
+
+      # 步骤 6: 验证新的插件条目
       - name: Validate new plugin entry
+        id: validate
+        continue-on-error: true
         # 运行一个内联的 Node.js 脚本
         run: |
           node <<'EOL'
@@ -117,6 +139,13 @@ jobs:
 
               let validationErrors = [];
               
+              // 保存验证结果到文件，供后续步骤使用
+              const validationResult = {
+                newPlugins: [],
+                modifiedPlugins: [],
+                errors: []
+              };
+
               // 验证所有新增的插件
               for (const plugin of newPlugins) {
                 try {
@@ -125,10 +154,12 @@ jobs:
                   const metadata = await fetchMetadata(plugin.repositoryUrl);
                   validateMetadata(metadata, plugin);
                   console.log(`✅ 新插件验证成功：${plugin.id}\n`);
+                  validationResult.newPlugins.push(plugin);
                 } catch (error) {
                   const errorMsg = `新插件 ${plugin.id} 验证失败：${error.message}`;
                   console.error(`❌ ${errorMsg}\n`);
                   validationErrors.push(errorMsg);
+                  validationResult.errors.push(errorMsg);
                 }
               }
 
@@ -140,12 +171,18 @@ jobs:
                   const metadata = await fetchMetadata(plugin.repositoryUrl);
                   validateMetadata(metadata, plugin);
                   console.log(`✅ 修改插件验证成功：${plugin.id}\n`);
+                  validationResult.modifiedPlugins.push(plugin);
                 } catch (error) {
                   const errorMsg = `修改插件 ${plugin.id} 验证失败：${error.message}`;
                   console.error(`❌ ${errorMsg}\n`);
                   validationErrors.push(errorMsg);
+                  validationResult.errors.push(errorMsg);
                 }
               }
+
+              // 始终保存验证结果到文件（即使有错误）
+              fs.writeFileSync('validation-result.json', JSON.stringify(validationResult, null, 2));
+              console.log('验证结果已保存到 validation-result.json');
 
               // 如果存在任何验证错误，则抛出异常并使 Action 失败
               if (validationErrors.length > 0) {
@@ -270,3 +307,332 @@ jobs:
           // 运行主函数
           main();
           EOL
+
+      # 步骤 7: 克隆插件仓库并运行 MPDT 检查
+      - name: Clone plugin repository and run MPDT check
+        id: mpdt-check
+        if: always()
+        run: |
+          # 读取验证结果
+          if [ ! -f validation-result.json ]; then
+            echo "跳过 MPDT 检查：没有找到验证结果文件"
+            exit 0
+          fi
+
+          # 提取插件信息
+          NEW_PLUGINS=$(cat validation-result.json | jq -r '.newPlugins[].repositoryUrl // empty')
+          MODIFIED_PLUGINS=$(cat validation-result.json | jq -r '.modifiedPlugins[].repositoryUrl // empty')
+          
+          # 合并所有需要检查的插件
+          ALL_PLUGINS=$(echo -e "$NEW_PLUGINS\n$MODIFIED_PLUGINS" | grep -v '^$' | sort -u)
+          
+          if [ -z "$ALL_PLUGINS" ]; then
+            echo "没有需要检查的插件"
+            exit 0
+          fi
+
+          # 初始化 JSON 数组文件
+          echo '[]' > mpdt-reports.json
+
+          MPDT_ERRORS=0
+          
+          # 对每个插件进行检查
+          while IFS= read -r repo_url; do
+            if [ -z "$repo_url" ]; then
+              continue
+            fi
+            
+            echo "正在检查插件: $repo_url"
+            
+            # 提取仓库名称
+            REPO_NAME=$(basename "$repo_url" .git)
+            PLUGIN_DIR="plugin-check-$REPO_NAME"
+            
+            # 克隆插件仓库
+            echo "克隆仓库到 $PLUGIN_DIR..."
+            if ! git clone --depth 1 "$repo_url" "$PLUGIN_DIR" 2>&1 | tee clone-output.txt; then
+              echo "## ❌ $REPO_NAME" >> mpdt-report.md
+              echo "" >> mpdt-report.md
+              echo "**错误**: 无法克隆仓库" >> mpdt-report.md
+              echo '```' >> mpdt-report.md
+              cat clone-output.txt >> mpdt-report.md
+              echo '```' >> mpdt-report.md
+              echo "" >> mpdt-report.md
+              MPDT_ERRORS=$((MPDT_ERRORS + 1))
+              continue
+            fi
+            
+            # 查找插件文件所在目录
+            echo "查找插件文件..."
+            PLUGIN_PATH="$PLUGIN_DIR"
+            
+            # 查找 plugin.py 或 __init__.py 文件
+            if [ -f "$PLUGIN_DIR/plugin.py" ] ; then
+              PLUGIN_PATH="$PLUGIN_DIR"
+              echo "✓ 在根目录找到插件文件"
+            else
+              # 遍历子目录查找插件文件
+              for dir in "$PLUGIN_DIR"/*/ ; do
+                if [ -d "$dir" ] && ([ -f "${dir}plugin.py" ]); then
+                  PLUGIN_PATH="$dir"
+                  echo "✓ 在 $(basename "$dir") 目录找到插件文件"
+                  break
+                fi
+              done
+            fi
+            
+            # 运行 MPDT check
+            echo "运行 MPDT 检查: $PLUGIN_PATH"
+            if mpdt check "$PLUGIN_PATH" --report json --output "${PLUGIN_DIR}-report.json" 2>&1 | tee mpdt-output.txt; then
+              echo "✅ MPDT 检查通过：$REPO_NAME"
+              
+              # 使用 jq 将报告添加到数组中
+              if [ -f "${PLUGIN_DIR}-report.json" ]; then
+                echo "[DEBUG] 找到 JSON 报告文件: ${PLUGIN_DIR}-report.json"
+                # 将新报告添加到数组中
+                jq -s '.[0] + [.[1]]' mpdt-reports.json "${PLUGIN_DIR}-report.json" > mpdt-reports-tmp.json
+                mv mpdt-reports-tmp.json mpdt-reports.json
+              fi
+            else
+              echo "⚠️ MPDT 检查发现问题：$REPO_NAME"
+              
+              # 使用 jq 将报告添加到数组中
+              if [ -f "${PLUGIN_DIR}-report.json" ]; then
+                echo "[DEBUG] 找到 JSON 报告文件: ${PLUGIN_DIR}-report.json"
+                jq -s '.[0] + [.[1]]' mpdt-reports.json "${PLUGIN_DIR}-report.json" > mpdt-reports-tmp.json
+                mv mpdt-reports-tmp.json mpdt-reports.json
+              else
+                echo "[DEBUG] 未找到 JSON 报告文件"
+              fi
+              
+              MPDT_ERRORS=$((MPDT_ERRORS + 1))
+            fi
+            
+            # 清理
+            rm -rf "$PLUGIN_DIR"
+          done <<< "$ALL_PLUGINS"
+          
+          # 保存错误计数
+          echo "MPDT_ERRORS=$MPDT_ERRORS" >> $GITHUB_ENV
+          
+          # 显示收集的报告
+          echo "=== MPDT 检查完成 ==="
+          if [ $MPDT_ERRORS -gt 0 ]; then
+            echo "⚠️ MPDT 检查发现 $MPDT_ERRORS 个问题"
+          else
+            echo "✅ MPDT 检查全部通过"
+          fi
+
+      # 步骤 8: 发布检查结果到 PR 评论
+      - name: Post check results to PR
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            
+            // 构建评论内容
+            let comment = '# 🔍 插件提交检查报告\n\n';
+            
+            let hasErrors = false;
+            let validationResult = null;
+            
+            // 读取验证结果
+            try {
+              validationResult = JSON.parse(fs.readFileSync('validation-result.json', 'utf8'));
+            } catch (error) {
+              console.log('无法读取验证结果');
+            }
+            
+            // 添加快速状态概览
+            const mpdtErrors = process.env.MPDT_ERRORS || '0';
+            const hasValidationErrors = validationResult && validationResult.errors.length > 0;
+            const hasMpdtErrors = mpdtErrors !== '0';
+            hasErrors = hasValidationErrors || hasMpdtErrors;
+            
+            if (!hasErrors) {
+              comment += '## ✅ 所有检查通过\n\n';
+              comment += '> 🎉 恭喜！您的插件已通过所有自动化检查，准备进行人工审核。\n\n';
+            } else {
+              comment += '## ⚠️ 发现问题\n\n';
+              comment += '> 请修复以下问题后重新提交。如有疑问，请查看 [插件开发文档](https://github.com/MoFox-Studio/MoFox-Plugin-Repo/wiki)。\n\n';
+            }
+            
+            // 元数据验证结果
+            comment += '---\n\n';
+            comment += '## 📋 元数据验证\n\n';
+            
+            if (validationResult) {
+              // 新增插件
+              if (validationResult.newPlugins.length > 0) {
+                comment += '### 新增插件\n\n';
+                validationResult.newPlugins.forEach(plugin => {
+                  comment += `- ✅ **${plugin.id}**\n`;
+                  comment += `  - 仓库: ${plugin.repositoryUrl}\n`;
+                });
+                comment += '\n';
+              }
+              
+              // 修改的插件
+              if (validationResult.modifiedPlugins.length > 0) {
+                comment += '### 修改的插件\n\n';
+                validationResult.modifiedPlugins.forEach(plugin => {
+                  comment += `- 🔄 **${plugin.id}**\n`;
+                  comment += `  - 仓库: ${plugin.repositoryUrl}\n`;
+                });
+                comment += '\n';
+              }
+              
+              // 验证错误
+              if (validationResult.errors.length > 0) {
+                comment += '### ❌ 验证错误\n\n';
+                comment += '```\n';
+                validationResult.errors.forEach((error, index) => {
+                  comment += `${index + 1}. ${error}\n`;
+                });
+                comment += '```\n\n';
+              } else {
+                comment += '> ✅ **元数据验证通过**\n\n';
+              }
+            } else {
+              comment += '> ⚠️ 无法读取验证结果\n\n';
+            }
+            
+            // MPDT 检查结果
+            comment += '---\n\n';
+            comment += '## 🔧 MPDT 静态检查\n\n';
+            
+            try {
+              const mpdtReportsRaw = fs.readFileSync('mpdt-reports.json', 'utf8');
+              const reports = JSON.parse(mpdtReportsRaw);
+              
+              console.log('[DEBUG] MPDT 报告数量:', reports.length);
+              
+              if (!Array.isArray(reports) || reports.length === 0) {
+                comment += '> ⚠️ MPDT 检查未运行或未生成报告\n\n';
+              } else {
+                let totalErrors = 0;
+                let totalWarnings = 0;
+                let totalInfo = 0;
+                let allIssues = [];
+                
+                // 解析每个 JSON 报告
+                reports.forEach((report, index) => {
+                  console.log(`[DEBUG] 解析报告 ${index + 1}:`, JSON.stringify(report.summary));
+                  
+                  totalErrors += report.summary.total_errors || 0;
+                  totalWarnings += report.summary.total_warnings || 0;
+                  totalInfo += report.summary.total_info || 0;
+                  
+                  // 收集问题
+                  if (report.issues && Array.isArray(report.issues)) {
+                    allIssues.push(...report.issues);
+                  }
+                });
+                
+                console.log('[DEBUG] 汇总 - 错误:', totalErrors, '警告:', totalWarnings, '信息:', totalInfo);
+                console.log('[DEBUG] 总问题数:', allIssues.length);
+                
+                if (totalErrors === 0 && totalWarnings === 0) {
+                  comment += '> ✅ **MPDT 检查通过**\n\n';
+                } else {
+                  comment += `**检查摘要**: ${totalErrors} 个错误, ${totalWarnings} 个警告\n\n`;
+                  
+                  // 显示错误
+                  const errors = allIssues.filter(issue => issue.level === 'error');
+                  if (errors.length > 0) {
+                    comment += '### ❌ 错误\n\n';
+                    errors.forEach((issue, index) => {
+                      comment += `${index + 1}. **[${issue.validator}]** ${issue.message}\n`;
+                      if (issue.file_path) {
+                        comment += `   📁 \`${issue.file_path}\``;
+                        if (issue.line_number) {
+                          comment += `:${issue.line_number}`;
+                        }
+                        comment += '\n';
+                      }
+                      if (issue.suggestion) {
+                        comment += `   💡 *${issue.suggestion}*\n`;
+                      }
+                      comment += '\n';
+                    });
+                  }
+                  
+                  // 显示警告（限制数量）
+                  const warnings = allIssues.filter(issue => issue.level === 'warning');
+                  if (warnings.length > 0) {
+                    comment += '### ⚠️ 警告\n\n';
+                    const displayWarnings = warnings.slice(0, 15); // 只显示前10个
+                    displayWarnings.forEach((issue, index) => {
+                      comment += `${index + 1}. **[${issue.validator}]** ${issue.message}\n`;
+                      if (issue.file_path) {
+                        comment += `   📁文件路径： \`${issue.file_path}\``;
+                        if (issue.line_number) {
+                          comment += `:${issue.line_number}`;
+                        }
+                        comment += '\n';
+                      }
+                      if (issue.suggestion) {
+                        comment += `   💡 *${issue.suggestion}*\n`;
+                      }
+                      comment += '\n';
+                    });
+                    if (warnings.length > 10) {
+                      comment += `\n*...还有 ${warnings.length - 10} 个警告未显示*\n`;
+                    }
+                    comment += '\n> 💡 虽然警告不会阻止提交，但建议开发者修复这些问题以提高插件质量。\n\n';
+                  }
+                }
+              }
+            } catch (error) {
+              console.error('[DEBUG] 读取或解析 MPDT 报告失败:', error.message);
+              comment += '> ⚠️ MPDT 检查未运行或未生成报告\n\n';
+            }
+            
+            // 添加底部说明
+            comment += '---\n\n';
+            if (!hasErrors) {
+              comment += '### 📝 下一步\n\n';
+              comment += '- 维护者将尽快审核您的提交\n';
+              comment += '- 您可能会收到进一步的反馈或修改建议\n';
+              comment += '- 感谢您为 MoFox 插件生态做出贡献！ 🙏\n\n';
+            } else {
+              comment += '### 💡 需要帮助？\n\n';
+              comment += '- 📖 查看 [插件开发文档](https://github.com/MoFox-Studio/MoFox-Plugin-Repo/wiki)\n';
+              comment += '- 💬 在 Issue 中留言询问\n';
+              comment += '- 🔧 使用 `mpdt check` 命令在本地测试\n\n';
+            }
+            
+            comment += '<sub>🤖 此报告由自动化工作流生成</sub>';
+            
+            // 发布评论
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            // 查找之前的自动评论
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && 
+              (comment.body.includes('🔍 插件提交检查结果') || comment.body.includes('🔍 插件提交检查报告'))
+            );
+            
+            if (botComment) {
+              // 更新现有评论
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: comment
+              });
+            } else {
+              // 创建新评论
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+            }
