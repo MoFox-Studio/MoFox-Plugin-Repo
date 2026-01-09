@@ -281,7 +281,7 @@
       "name": "开盒插件",
       "description": "利用Onebot协议的接口获取QQ用户信息,并以图片形式展示",
       "usage": "",
-      "version": "1.0.0",
+      "version": "1.2.0",
       "author": "ikun两年半",
       "license": "AGPL",
       "repository_url": "https://github.com/ikun-11451/box_plugin",
