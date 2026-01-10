@@ -456,7 +456,7 @@ jobs:
               comment += '> 🎉 恭喜！您的插件已通过所有自动化检查，准备进行人工审核。\n\n';
             } else {
               comment += '## ⚠️ 发现问题\n\n';
-              comment += '> 请修复以下问题后重新提交。如有疑问，请查看 [插件开发文档](https://github.com/MoFox-Studio/MoFox-Plugin-Repo/wiki)。\n\n';
+              comment += '> 请修复以下问题后重新提交。如有疑问，请查看 [插件开发文档](https://docs.mofox-sama.com/docs/development/plugins/)。\n\n';
             }
             
             // 元数据验证结果
@@ -563,7 +563,7 @@ jobs:
                   const warnings = allIssues.filter(issue => issue.level === 'warning');
                   if (warnings.length > 0) {
                     comment += '### ⚠️ 警告\n\n';
-                    const displayWarnings = warnings.slice(0, 15); // 只显示前10个
+                    const displayWarnings = warnings.slice(0, 15); // 只显示前15个
                     displayWarnings.forEach((issue, index) => {
                       comment += `${index + 1}. **[${issue.validator}]** ${issue.message}\n`;
                       if (issue.file_path) {
@@ -599,7 +599,7 @@ jobs:
               comment += '- 感谢您为 MoFox 插件生态做出贡献！ 🙏\n\n';
             } else {
               comment += '### 💡 需要帮助？\n\n';
-              comment += '- 📖 查看 [插件开发文档](https://github.com/MoFox-Studio/MoFox-Plugin-Repo/wiki)\n';
+              comment += '- 📖 查看 [插件开发文档](https://docs.mofox-sama.com/docs/development/plugins/)\n';
               comment += '- 💬 在 Issue 中留言询问\n';
               comment += '- 🔧 使用 `mpdt check` 命令在本地测试\n\n';
             }
