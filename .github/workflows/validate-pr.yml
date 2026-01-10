@@ -76,10 +76,45 @@ jobs:
 
           // 主函数，执行所有验证逻辑
           async function main() {
+            // 初始化验证结果对象
+            const validationResult = {
+              newPlugins: [],
+              modifiedPlugins: [],
+              errors: []
+            };
+
             try {
-              // 读取 main 分支和 PR 分支的 plugins.json 文件
-              const mainPlugins = JSON.parse(fs.readFileSync('main/plugins.json', 'utf8'));
-              const prPlugins = JSON.parse(fs.readFileSync('pr/plugins.json', 'utf8'));
+              // 读取并验证 main 分支的 plugins.json 文件
+              let mainPluginsContent;
+              let mainPlugins;
+              try {
+                mainPluginsContent = fs.readFileSync('main/plugins.json', 'utf8');
+                mainPlugins = JSON.parse(mainPluginsContent);
+              } catch (error) {
+                const errorMsg = `主分支 plugins.json 文件格式错误：${error.message}`;
+                console.error(`❌ ${errorMsg}`);
+                validationResult.errors.push(errorMsg);
+                // 保存错误结果并立即退出
+                fs.writeFileSync('validation-result.json', JSON.stringify(validationResult, null, 2));
+                console.error('验证结果已保存到 validation-result.json');
+                process.exit(1);
+              }
+
+              // 读取并验证 PR 分支的 plugins.json 文件
+              let prPluginsContent;
+              let prPlugins;
+              try {
+                prPluginsContent = fs.readFileSync('pr/plugins.json', 'utf8');
+                prPlugins = JSON.parse(prPluginsContent);
+              } catch (error) {
+                const errorMsg = `PR 分支 plugins.json 文件格式错误：${error.message}`;
+                console.error(`❌ ${errorMsg}`);
+                validationResult.errors.push(errorMsg);
+                // 保存错误结果并立即退出
+                fs.writeFileSync('validation-result.json', JSON.stringify(validationResult, null, 2));
+                console.error('验证结果已保存到 validation-result.json');
+                process.exit(1);
+              }
 
               console.log(`主分支有 ${mainPlugins.length} 个插件`);
               console.log(`PR 分支有 ${prPlugins.length} 个插件`);
@@ -138,13 +173,6 @@ jobs:
               }
 
               let validationErrors = [];
-              
-              // 保存验证结果到文件，供后续步骤使用
-              const validationResult = {
-                newPlugins: [],
-                modifiedPlugins: [],
-                errors: []
-              };
 
               // 验证所有新增的插件
               for (const plugin of newPlugins) {
@@ -432,10 +460,6 @@ jobs:
           script: |
             const fs = require('fs');
             
-            // 构建评论内容
-            let comment = '# 🔍 插件提交检查报告\n\n';
-            
-            let hasErrors = false;
             let validationResult = null;
             
             // 读取验证结果
@@ -444,6 +468,69 @@ jobs:
             } catch (error) {
               console.log('无法读取验证结果');
             }
+            
+            // 检查是否是 JSON 格式错误（特殊处理）
+            const isJsonFormatError = validationResult &&
+              validationResult.errors.length > 0 &&
+              validationResult.errors.some(err => err.includes('plugins.json 文件格式错误'));
+            
+            // 如果是 JSON 格式错误，直接显示简洁的错误评论
+            if (isJsonFormatError) {
+              const jsonError = validationResult.errors.find(err => err.includes('plugins.json 文件格式错误'));
+              
+              let comment = '# ❌ JSON 格式错误\n\n';
+              comment += '您的 `plugins.json` 文件存在格式错误，请修复后重新提交。\n\n';
+              comment += '## 错误详情\n\n';
+              comment += '```\n';
+              comment += jsonError + '\n';
+              comment += '```\n\n';
+              comment += '---\n\n';
+              comment += '## 💡 如何修复\n\n';
+              comment += '1. 使用 JSON 验证工具检查文件格式（如 [JSONLint](https://jsonlint.com/)）\n';
+              comment += '2. 确保所有的引号、括号、逗号都正确匹配\n';
+              comment += '3. 检查是否有多余的逗号或缺失的逗号\n';
+              comment += '4. 确保字符串值使用双引号而不是单引号\n\n';
+              comment += '---\n\n';
+              comment += '### 📚 相关资源\n\n';
+              comment += '- [JSON 格式规范](https://www.json.org/json-zh.html)\n';
+              comment += '- [插件开发文档](https://docs.mofox-sama.com/docs/development/plugins/)\n\n';
+              comment += '<sub>🤖 此报告由自动化工作流生成</sub>';
+              
+              // 发布评论
+              const { data: comments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+              });
+              
+              const botComment = comments.find(comment =>
+                comment.user.type === 'Bot' &&
+                (comment.body.includes('🔍 插件提交检查结果') || comment.body.includes('🔍 插件提交检查报告') || comment.body.includes('❌ JSON 格式错误'))
+              );
+              
+              if (botComment) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: botComment.id,
+                  body: comment
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  body: comment
+                });
+              }
+              
+              return; // 直接返回，不执行后续的常规报告生成
+            }
+            
+            // 正常流程：构建完整的检查报告
+            let comment = '# 🔍 插件提交检查报告\n\n';
+            
+            let hasErrors = false;
             
             // 添加快速状态概览
             const mpdtErrors = process.env.MPDT_ERRORS || '0';
@@ -614,9 +701,9 @@ jobs:
             });
             
             // 查找之前的自动评论
-            const botComment = comments.find(comment => 
-              comment.user.type === 'Bot' && 
-              (comment.body.includes('🔍 插件提交检查结果') || comment.body.includes('🔍 插件提交检查报告'))
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              (comment.body.includes('🔍 插件提交检查结果') || comment.body.includes('🔍 插件提交检查报告') || comment.body.includes('❌ JSON 格式错误'))
             );
             
             if (botComment) {
