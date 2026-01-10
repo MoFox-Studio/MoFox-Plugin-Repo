@@ -58,5 +58,9 @@
   {
     "id": "ikun-11451.box_plugin",
     "repositoryUrl": "https://github.com/ikun-11451/box_plugin"
+  },
+  {
+    "id": "bingyv92.custom_prompt_injector",
+    "repositoryUrl": "https://github.com/bingyv92/custom_prompt_injector"
   }
-]
+ ]
