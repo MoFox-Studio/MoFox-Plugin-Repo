@@ -36,8 +36,7 @@
         "Entertainment",
         "Games",
         "Fun"
-      ],
-      "extra": "{\n        \"is_built_in\": false,  # 第三方插件\n        \"plugin_type\": \"entertainment\",\n        \"min_bot_version\": \"1.0.0\",\n        \"python_version\": \">=3.11\",\n    }"
+      ]
     },
     "createdAt": "2025-10-31T12:24:05.706Z"
   },
@@ -82,7 +81,6 @@
         "statistics",
         "management"
       ],
-      "extra": "{\n        \"plugin_type\": \"info\",\n    }",
       "python_dependencies": [
         "psutil",
         "Pillow"
@@ -108,8 +106,7 @@
       "categories": [
         "娱乐",
         "角色扮演"
-      ],
-      "extra": "{\n        \"is_built_in\": false,\n        \"plugin_type\": \"user\",\n    }"
+      ]
     },
     "createdAt": "2025-12-10T13:43:38.725Z"
   },
@@ -159,8 +156,7 @@
         "Chat",
         "AI",
         "Planning"
-      ],
-      "extra": "{\n        \"is_built_in\": false,\n        \"chat_type\": \"private\",\n        \"original_project\": \"https://github.com/MaiM-with-u/MaiBot\",\n        \"original_version\": \"0.6.3-fix4\",\n    }"
+      ]
     },
     "createdAt": "2025-12-31T14:37:08.294Z"
   },
@@ -184,8 +180,7 @@
       "categories": [
         "system",
         "protection"
-      ],
-      "extra": "{\n        \"is_built_in\": true,\n    }"
+      ]
     },
     "createdAt": "2026-01-02T09:34:38.719Z"
   },
@@ -214,7 +209,6 @@
         "Communication",
         "Accessibility"
       ],
-      "extra": "{\n        \"is_built_in\": false,\n        \"plugin_type\": \"tools\",\n    }",
       "python_dependencies": [
         "aiohttp",
         "soundfile",
@@ -244,8 +238,7 @@
       "categories": [
         "utility",
         "personality"
-      ],
-      "extra": "{\n        \"is_built_in\": true,\n    }"
+      ]
     },
     "createdAt": "2026-01-02T18:26:25.924Z"
   },
@@ -270,8 +263,7 @@
         "memory",
         "enhancement",
         "personality"
-      ],
-      "extra": "{\n        \"is_built_in\": false,\n    }"
+      ]
     },
     "createdAt": "2026-01-06T16:37:09.031Z"
   },
@@ -297,8 +289,7 @@
       ],
       "python_dependencies": "[\n        PythonDependency(\n            package_name=\"PIL\",\n            install_name=\"Pillow\",\n            version=\">=9.0.0\",\n            description=\"图片处理库，用于生成开盒卡片\"\n        ),\n        PythonDependency(\n            package_name=\"emoji\",\n            version=\">=2.0.0\",\n            description=\"Emoji处理库，用于显示Emoji\"\n        ),\n        PythonDependency(\n            package_name=\"zhdate\",\n            version=\">=0.1.0\",\n            description=\"农历日期处理库，用于计算生肖\"\n        )\n    ]",
       "dependencies": [],
-      "type": null,
-      "extra": "{\n        \"is_built_in\": false,\n        \"plugin_type\": \"entertainment\",\n    }"
+      "type": null
     },
     "createdAt": "2026-01-06T22:25:54.518Z"
   },
