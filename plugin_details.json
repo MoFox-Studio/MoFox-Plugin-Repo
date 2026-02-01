@@ -314,5 +314,27 @@
       "repository_url": "https://github.com/bingyv92/custom_prompt_injector"
     },
     "createdAt": "2026-01-10T13:09:13.836Z"
+  },
+  {
+    "id": "ikun-11451.siliconflow_balance_plugin",
+    "manifest": {
+      "name": "硅基流动余额查询",
+      "description": "查询 SiliconFlow (硅基流动) API 账户余额的插件",
+      "usage": "",
+      "author": "ikun两年半",
+      "version": "1.0.0",
+      "repository_url": "https://github.com/ikun-11451/siliconflow_balance_plugin",
+      "license": "AGPL",
+      "keywords": [
+        "siliconflow",
+        "硅基流动",
+        "余额",
+        "API"
+      ],
+      "categories": [
+        "工具"
+      ]
+    },
+    "createdAt": "2026-02-01T06:34:22.008Z"
   }
 ]
