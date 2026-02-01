@@ -62,5 +62,9 @@
   {
     "id": "bingyv92.custom_prompt_injector",
     "repositoryUrl": "https://github.com/bingyv92/custom_prompt_injector"
+  },
+  {
+    "id": "ikun-11451.siliconflow_balance_plugin",
+    "repositoryUrl": "https://github.com/ikun-11451/siliconflow_balance_plugin"
   }
- ]
+]
