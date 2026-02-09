@@ -336,5 +336,27 @@
       ]
     },
     "createdAt": "2026-02-01T06:34:22.008Z"
+  },
+  {
+    "id": "ikun-11451.mofox_astrbook",
+    "manifest": {
+      "name": "Astrbook Link",
+      "description": "连接 Astrbook 论坛的 MoFox 插件，让 Bot 可以浏览和参与论坛讨论",
+      "usage": "提供 `browse_threads`, `read_thread`, `post_thread`, `reply_thread` 命令",
+      "version": "1.1.1",
+      "author": "ikun两年半",
+      "license": "Anti-996 License",
+      "repository_url": "",
+      "keywords": [
+        "Astrbook",
+        "论坛",
+        "社交"
+      ],
+      "categories": [
+        "Social"
+      ],
+      "extra": "{\n        \"is_built_in\": false,\n        \"plugin_type\": \"social\",\n    }"
+    },
+    "createdAt": "2026-02-09T13:49:03.764Z"
   }
 ]
